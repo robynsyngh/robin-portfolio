@@ -30,7 +30,11 @@ const ArchitectureSection = dynamic(
     ),
   {
     loading: () => (
-      <section className="min-h-svh py-[var(--space-section)]" aria-hidden />
+      <section
+        id="architecture"
+        className="min-h-svh py-[var(--space-section)]"
+        aria-hidden
+      />
     ),
   },
 );
@@ -42,7 +46,11 @@ const PortfolioTerminal = dynamic(
     ),
   {
     loading: () => (
-      <section className="min-h-[28rem] py-[var(--space-section)]" aria-hidden />
+      <section
+        id="terminal"
+        className="min-h-[28rem] py-[var(--space-section)]"
+        aria-hidden
+      />
     ),
   },
 );

@@ -29,10 +29,30 @@ export function getHomeSectionIds(navigation: NavItem[]) {
   return ids;
 }
 
+function initialActiveId(sectionIds: string[]) {
+  if (typeof window === "undefined") {
+    return sectionIds[0] ?? "home";
+  }
+
+  const hashId = window.location.hash.slice(1);
+  if (hashId && sectionIds.includes(hashId)) {
+    return hashId;
+  }
+
+  return sectionIds[0] ?? "home";
+}
+
 export function useActiveSection(sectionIds: string[], enabled: boolean) {
   const lenis = useLenis();
-  const [activeId, setActiveId] = useState(sectionIds[0] ?? "home");
-  const lockedUntilRef = useRef(0);
+  const [activeId, setActiveId] = useState(() => initialActiveId(sectionIds));
+  // Give a hash-based initial section time to finish its scroll-in
+  // animation (including any layout settling from lazily-loaded
+  // sections) before organic scroll tracking is allowed to override it.
+  const lockedUntilRef = useRef(
+    typeof window !== "undefined" && window.location.hash
+      ? Date.now() + 2200
+      : 0,
+  );
   const sectionIdsKey = sectionIds.join("|");
 
   const resolveActive = useCallback(() => {

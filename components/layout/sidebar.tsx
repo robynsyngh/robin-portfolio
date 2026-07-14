@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,12 +53,71 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const [navOverflow, setNavOverflow] = useState({ top: false, bottom: false });
 
   const sectionIds = useMemo(() => getHomeSectionIds(navigation), [navigation]);
   const { activeId, setActiveIdLocked } = useActiveSection(
     sectionIds,
     pathname === "/",
   );
+
+  const updateNavOverflow = useCallback(() => {
+    const nav = navRef.current;
+    if (!nav) {
+      return;
+    }
+
+    const { scrollTop, scrollHeight, clientHeight } = nav;
+    setNavOverflow({
+      top: scrollTop > 1,
+      bottom: scrollTop + clientHeight < scrollHeight - 1,
+    });
+  }, []);
+
+  useEffect(() => {
+    updateNavOverflow();
+
+    const nav = navRef.current;
+    if (!nav) {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver(updateNavOverflow);
+    resizeObserver.observe(nav);
+    window.addEventListener("resize", updateNavOverflow);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateNavOverflow);
+    };
+  }, [updateNavOverflow, navigation]);
+
+  // Keep the active link in view as the user scrolls the page, mirroring
+  // the auto-scroll that already happens when they click a nav item.
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) {
+      return;
+    }
+
+    const activeLink = nav.querySelector<HTMLAnchorElement>(
+      'a[aria-current="page"]',
+    );
+    if (!activeLink) {
+      return;
+    }
+
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = activeLink.getBoundingClientRect();
+    const margin = 8;
+
+    if (linkRect.top < navRect.top) {
+      nav.scrollTop -= navRect.top - linkRect.top + margin;
+    } else if (linkRect.bottom > navRect.bottom) {
+      nav.scrollTop += linkRect.bottom - navRect.bottom + margin;
+    }
+  }, [activeId]);
 
   // Avoid SSR/client media-query mismatches on inert/tabIndex.
   const drawerInactive = mounted && !isDesktop && !open;
@@ -222,47 +281,69 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
             </Text>
           </Link>
 
-          <nav aria-label="Primary" className="mt-12 flex-1 overflow-y-auto">
-            <ul className="space-y-1">
-              {navigation.map((item) => {
-                const active = isNavActive(pathname, activeId, item.href);
+          <div className="relative mt-12 min-h-0 flex-1">
+            <nav
+              ref={navRef}
+              aria-label="Primary"
+              className="h-full overflow-y-auto"
+              onScroll={updateNavOverflow}
+            >
+              <ul className="space-y-1">
+                {navigation.map((item) => {
+                  const active = isNavActive(pathname, activeId, item.href);
 
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      tabIndex={drawerInactive ? -1 : undefined}
-                      onClick={(event) => handleNavClick(event, item.href)}
-                      className={cn(
-                        "relative flex min-h-11 items-center py-2 font-mono text-sm tracking-wide transition-colors duration-200",
-                        active
-                          ? "text-foreground"
-                          : "text-muted hover:text-foreground",
-                      )}
-                    >
-                      <span
-                        aria-hidden
-                        className="relative mr-3 flex h-px w-4 items-center"
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        tabIndex={drawerInactive ? -1 : undefined}
+                        onClick={(event) => handleNavClick(event, item.href)}
+                        className={cn(
+                          "relative flex min-h-11 items-center py-2 font-mono text-sm tracking-wide transition-colors duration-200",
+                          active
+                            ? "text-foreground"
+                            : "text-muted hover:text-foreground",
+                        )}
                       >
-                        {active ? (
-                          <motion.span
-                            layoutId={mounted ? "nav-active-indicator" : undefined}
-                            className="absolute inset-0 bg-accent"
-                            transition={{
-                              duration: reducedMotion ? 0 : 0.35,
-                              ease,
-                            }}
-                          />
-                        ) : null}
-                      </span>
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+                        <span
+                          aria-hidden
+                          className="relative mr-3 flex h-px w-4 items-center"
+                        >
+                          {active ? (
+                            <motion.span
+                              layoutId={mounted ? "nav-active-indicator" : undefined}
+                              className="absolute inset-0 bg-accent"
+                              transition={{
+                                duration: reducedMotion ? 0 : 0.35,
+                                ease,
+                              }}
+                            />
+                          ) : null}
+                        </span>
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <div
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-background to-transparent transition-opacity duration-200",
+                navOverflow.top ? "opacity-100" : "opacity-0",
+              )}
+            />
+            <div
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-background to-transparent transition-opacity duration-200",
+                navOverflow.bottom ? "opacity-100" : "opacity-0",
+              )}
+            />
+          </div>
 
           <div className="mt-auto space-y-4 border-t border-border pt-6">
             <div className="flex flex-wrap gap-x-4 gap-y-2">
