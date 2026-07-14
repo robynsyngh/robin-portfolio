@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Badge, Container, Stack, Text, TextLink } from "@/components/ui";
+import { BackLink } from "@/components/case-studies/back-link";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
   getCaseStudies,
@@ -97,13 +98,12 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
         <Container narrow>
           <Stack gap="lg">
             <div>
-              <TextLink
-                href="/#case-studies"
-                subtle
+              <BackLink
+                fallbackHref="/#case-studies"
                 className="font-mono text-xs tracking-wide"
               >
                 ← Case Studies
-              </TextLink>
+              </BackLink>
 
               <Text as="p" variant="label" className="mt-10">
                 Case Study

@@ -102,6 +102,10 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
       engage: 0,
     };
 
+    // Ambient light — wanders slowly through the rightmost margin so the
+    // field always feels alive, even at rest with no pointer/scroll input.
+    const ambient = { x: 0, y: 0 };
+
     const nodes: RuntimeNode[] = background.nodes.map((node) => ({
       ...node,
       base: { x: 0, y: 0 },
@@ -304,6 +308,17 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
       scroll.engage = lerp(scroll.engage, scrollEnergy, 0.08);
 
       const decorativeFloor = background.contentSafeLeft * width;
+
+      // Slow independent drift, biased hard to the right edge, using two
+      // mismatched sine periods so the path never quite repeats.
+      const t = time / 1000;
+      const ambientMinX = Math.max(decorativeFloor + width * 0.06, width * 0.82);
+      const ambient1 = (Math.sin(t * 0.09) + 1) / 2;
+      const ambient2 = (Math.sin(t * 0.132 + 1.7) + 1) / 2;
+      ambient.x = lerp(ambientMinX, width * 0.97, ambient1);
+      ambient.y = lerp(height * 0.12, height * 0.88, ambient2);
+      const ambientPulse = 0.55 + 0.45 * Math.sin(t * 0.4);
+
       const pointerEnergy = pointerActive
         ? 1
         : clamp(1 - pointerIdle * 1.2, 0.15, 1) * (isCoarse ? 0.35 : 0.55);
@@ -381,7 +396,15 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
 
         const d = dist({ x: baseX, y: baseY }, pointer);
         const near = pointerInDecor ? clamp(1 - d / radius, 0, 1) : 0;
-        node.activation = lerp(node.activation, near * decorPointerEnergy, 0.14);
+
+        const ambientD = dist({ x: baseX, y: baseY }, ambient);
+        const ambientNear = clamp(1 - ambientD / (radius * 0.85), 0, 1) * ambientPulse * 0.4;
+
+        node.activation = lerp(
+          node.activation,
+          Math.max(near * decorPointerEnergy, ambientNear),
+          0.14,
+        );
 
         const wantFocus = focusNeighbors.has(i) ? 1 : 0;
         node.focus = lerp(node.focus, wantFocus, 0.14);
@@ -550,6 +573,32 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
           ctx.fillStyle = `rgba(154, 154, 154, ${0.25 + node.focus * 0.3})`;
           ctx.fillText(node.label, node.pos.x + 8, node.pos.y - 6);
         }
+      }
+
+      // Ambient light — always drawn, independent of pointer/touch, so the
+      // rightmost margin keeps a slow moving glow at rest.
+      {
+        const glowRadius = radius * 0.85;
+        const glowAlpha = (0.05 + ambientPulse * 0.05) * introEase;
+        const gradient = ctx.createRadialGradient(
+          ambient.x,
+          ambient.y,
+          0,
+          ambient.x,
+          ambient.y,
+          glowRadius,
+        );
+        gradient.addColorStop(0, `rgba(245, 245, 245, ${glowAlpha})`);
+        gradient.addColorStop(1, "rgba(245, 245, 245, 0)");
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(ambient.x, ambient.y, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = `rgba(245, 245, 245, ${(0.06 + ambientPulse * 0.06) * introEase})`;
+        ctx.beginPath();
+        ctx.arc(ambient.x, ambient.y, glowRadius * 0.18, 0, Math.PI * 2);
+        ctx.stroke();
       }
 
       if (focusIndex >= 0 && pointerActive && pointerInDecor) {

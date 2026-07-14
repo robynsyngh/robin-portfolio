@@ -13,7 +13,7 @@ type ProjectItemProps = {
 };
 
 export function ProjectItem({ project, caseStudies, index }: ProjectItemProps) {
-  const [open, setOpen] = useState(project.type === "production");
+  const [open, setOpen] = useState(false);
 
   return (
     <article className="border-t border-border py-10 md:py-12">

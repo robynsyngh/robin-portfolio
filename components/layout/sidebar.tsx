@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -9,10 +9,7 @@ import { cn } from "@/lib/utils";
 import { Text } from "@/components/ui/text";
 import { TextLink } from "@/components/ui/text-link";
 import { useLenis } from "@/components/smooth-scroll/lenis-context";
-import {
-  getHomeSectionIds,
-  useActiveSection,
-} from "@/hooks/use-active-section";
+import { useActiveSectionContext } from "@/components/navigation/active-section-provider";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
@@ -56,11 +53,7 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
   const navRef = useRef<HTMLElement>(null);
   const [navOverflow, setNavOverflow] = useState({ top: false, bottom: false });
 
-  const sectionIds = useMemo(() => getHomeSectionIds(navigation), [navigation]);
-  const { activeId, setActiveIdLocked } = useActiveSection(
-    sectionIds,
-    pathname === "/",
-  );
+  const { activeId, setActiveIdLocked } = useActiveSectionContext();
 
   const updateNavOverflow = useCallback(() => {
     const nav = navRef.current;
@@ -187,9 +180,9 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
     }
 
     const sectionId = href === "/" ? "home" : href.slice(2);
-    setActiveIdLocked(sectionId);
 
     if (pathname === "/") {
+      setActiveIdLocked(sectionId);
       event.preventDefault();
       const nextUrl = sectionId === "home" ? "/" : `/#${sectionId}`;
       window.history.pushState(null, "", nextUrl);
@@ -209,6 +202,12 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
       return;
     }
 
+    // Cross-page navigation has to wait for the destination route's
+    // sections (including lazily-loaded ones) to mount and settle before
+    // the hash-scroll finishes, which takes noticeably longer than an
+    // in-page scroll — lock scroll-spy for the full settle window so it
+    // doesn't override the target section mid-transition.
+    setActiveIdLocked(sectionId, 3000);
     event.preventDefault();
     router.push(sectionId === "home" ? "/" : `/#${sectionId}`);
   };
@@ -285,7 +284,8 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
             <nav
               ref={navRef}
               aria-label="Primary"
-              className="h-full overflow-y-auto"
+              data-lenis-prevent
+              className="h-full overflow-y-auto overscroll-contain"
               onScroll={updateNavOverflow}
             >
               <ul className="space-y-1">

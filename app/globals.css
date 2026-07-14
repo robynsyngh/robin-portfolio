@@ -64,6 +64,16 @@ body {
   outline-offset: 3px;
 }
 
+button:not(:disabled),
+a,
+[role="button"],
+summary,
+select,
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
 .skip-link {
   position: absolute;
   left: 1rem;

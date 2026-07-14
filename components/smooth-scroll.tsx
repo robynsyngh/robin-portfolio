@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePathname } from "next/navigation";
 import { LenisProvider } from "@/components/smooth-scroll/lenis-context";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { markNavigatedWithinSession } from "@/lib/session-nav";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,6 +15,15 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const reducedMotion = usePrefersReducedMotion();
   const pathname = usePathname();
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const isFirstPathnameRef = useRef(true);
+
+  useEffect(() => {
+    if (isFirstPathnameRef.current) {
+      isFirstPathnameRef.current = false;
+      return;
+    }
+    markNavigatedWithinSession();
+  }, [pathname]);
 
   useEffect(() => {
     document.documentElement.dataset.reducedMotion = reducedMotion ? "true" : "false";

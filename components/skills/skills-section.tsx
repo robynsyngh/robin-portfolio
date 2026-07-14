@@ -113,7 +113,7 @@ function SkillItem({
 
 export function SkillsSection({ skills }: SkillsSectionProps) {
   const reducedMotion = usePrefersReducedMotion();
-  const [openId, setOpenId] = useState<string | null>(skills.items[0]?.id ?? null);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   return (
     <section id="skills" className="scroll-mt-24 py-[var(--space-section)]">
