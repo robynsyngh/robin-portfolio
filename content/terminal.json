@@ -1,0 +1,25 @@
+{
+  "eyebrow": "Terminal",
+  "title": "Talk to the portfolio like a system.",
+  "description": "Type help to see available commands. Easter eggs encouraged.",
+  "prompt": "robin@portfolio:~$",
+  "welcome": [
+    "Robin Singh Portfolio Runtime v1.0",
+    "Type `help` to list commands. Type something weird on purpose."
+  ],
+  "unknown": "command not found: {{command}}. Try `help`.",
+  "commands": [
+    { "name": "help", "description": "List available commands" },
+    { "name": "about", "description": "Engineering summary" },
+    { "name": "whoami", "description": "Identity check" },
+    { "name": "projects", "description": "List featured projects" },
+    { "name": "skills", "description": "Production skill surface" },
+    { "name": "architecture", "description": "Jump the request path" },
+    { "name": "blog", "description": "Open writing" },
+    { "name": "contact", "description": "Get in touch" },
+    { "name": "resume", "description": "Download resume" },
+    { "name": "github", "description": "Open GitHub" },
+    { "name": "linkedin", "description": "Open LinkedIn" },
+    { "name": "clear", "description": "Clear the terminal" }
+  ]
+}

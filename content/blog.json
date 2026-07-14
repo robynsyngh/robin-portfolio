@@ -1,0 +1,13 @@
+{
+  "title": "Blog",
+  "headline": "Notes from production systems.",
+  "description": "Writing on async architecture, reliability, payments, AI boundaries, and engineering tradeoffs.",
+  "categories": [
+    "Node.js",
+    "Redis",
+    "BullMQ",
+    "Stripe",
+    "AI",
+    "System Design"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Robin Singh",
+  "title": "Senior Full Stack Engineer",
+  "headline": "Building scalable systems that solve real problems.",
+  "headlineLines": [
+    "Building scalable systems",
+    "that solve real problems."
+  ],
+  "summary": "Senior full stack engineer focused on scalable backend systems, FinTech, AI integrations, and production-grade architecture.",
+  "location": "India",
+  "experienceYears": "Nearly 5 Years",
+  "currentCompany": "Bridging Healthcare Technologies",
+  "siteUrl": "https://robinsingh.dev",
+  "email": "robynsyngh@gmail.com",
+  "resumePath": "/resume.pdf",
+  "focusAreas": ["Backend", "FinTech", "AI", "Payments"],
+  "social": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/robynsyngh"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/robin-singh-39a2841a3/"
+    }
+  ]
+}

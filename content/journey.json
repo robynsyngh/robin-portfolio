@@ -1,0 +1,49 @@
+{
+  "eyebrow": "Journey",
+  "title": "Engineering through production systems.",
+  "description": "Timeline, roles, and the platforms that shaped how I build.",
+  "milestones": [
+    {
+      "id": "joined",
+      "date": "Oct 2021",
+      "title": "Joined Bridging Healthcare Technologies",
+      "detail": "Started building production systems across healthcare and FinTech product lines."
+    },
+    {
+      "id": "credee",
+      "date": "2022",
+      "title": "Credee FinTech Platform",
+      "detail": "Shipped payment flows, contracts, and money-adjacent architecture with Stripe at the core."
+    },
+    {
+      "id": "stripe",
+      "date": "2022–2023",
+      "title": "Stripe production systems",
+      "detail": "Webhook-driven state, dynamic fees, and idempotent recovery paths under real payment load."
+    },
+    {
+      "id": "practina",
+      "date": "2023–2024",
+      "title": "Practina AI Platform",
+      "detail": "Built AI marketing workflows with OpenAI, queues, retries, and cost-aware generation pipelines."
+    },
+    {
+      "id": "leadership",
+      "date": "2024",
+      "title": "Systems ownership & leadership",
+      "detail": "Owned Redis, BullMQ, AWS, and MySQL paths — from design decisions to production incident response."
+    },
+    {
+      "id": "senior",
+      "date": "Present",
+      "title": "Senior Full Stack Developer",
+      "detail": "Nearly five years shipping scalable backend systems, FinTech, and AI integrations end to end."
+    },
+    {
+      "id": "next",
+      "date": "Next",
+      "title": "Open to the next challenge",
+      "detail": "Looking for senior roles where production architecture, payments, and AI systems actually matter."
+    }
+  ]
+}

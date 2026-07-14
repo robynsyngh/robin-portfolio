@@ -1,0 +1,56 @@
+{
+  "eyebrow": "Achievements",
+  "title": "Signal over vanity metrics.",
+  "description": "Production outcomes from nearly five years shipping FinTech and AI systems — not badges, just load bearing numbers.",
+  "items": [
+    {
+      "id": "experience",
+      "label": "Experience",
+      "value": "5+",
+      "detail": "Years",
+      "description": "Shipping production systems across FinTech and AI products at Bridging Healthcare Technologies."
+    },
+    {
+      "id": "products",
+      "label": "Products",
+      "value": "2",
+      "detail": "In production",
+      "description": "Credee (FinTech payments) and Practina (AI marketing) owned end-to-end in production."
+    },
+    {
+      "id": "projects",
+      "label": "Featured Projects",
+      "value": "4",
+      "detail": "Systems",
+      "description": "Two production platforms plus focused personal systems for interviews and credit analysis."
+    },
+    {
+      "id": "features",
+      "label": "Features Shipped",
+      "value": "20+",
+      "detail": "Capabilities",
+      "description": "Payments, contracts, demand letters, AI generation, scheduling, galleries, and worker pipelines."
+    },
+    {
+      "id": "integrations",
+      "label": "Integrations",
+      "value": "10+",
+      "detail": "Services",
+      "description": "Stripe, OpenAI, AWS, Google APIs, Redis, BullMQ, MySQL, and related production vendors."
+    },
+    {
+      "id": "payments",
+      "label": "Payments",
+      "value": "Millions",
+      "detail": "Processed",
+      "description": "Money-adjacent flows with webhook-driven state, dynamic fees, and idempotent recovery paths."
+    },
+    {
+      "id": "queue-jobs",
+      "label": "Queue Jobs",
+      "value": "1000+",
+      "detail": "Handled",
+      "description": "Background work across payments, AI jobs, and integrations through resilient BullMQ workers."
+    }
+  ]
+}

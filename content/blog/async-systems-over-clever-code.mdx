@@ -1,0 +1,18 @@
+---
+title: "Async Systems Over Clever Code"
+description: "Why production systems win when work is durable, observable, and retryable."
+date: "2026-07-01"
+category: "Node.js"
+published: true
+---
+
+The systems that survive production rarely depend on clever request/response paths.
+
+They depend on:
+
+- clear boundaries
+- durable work
+- retries with idempotency
+- observability that matches failure modes
+
+Queues are not an optimization for later. For payment and AI workloads, they are often the architecture.

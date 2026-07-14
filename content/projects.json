@@ -1,0 +1,105 @@
+[
+  {
+    "id": "credee",
+    "title": "Credee",
+    "subtitle": "Production FinTech Platform",
+    "type": "production",
+    "summary": "Payments, contracts, demand letters, and dynamic fees backed by async workers and durable webhook-driven state.",
+    "role": "Senior Full Stack Developer — backend systems, payments, and worker architecture.",
+    "stack": ["Node.js", "TypeScript", "Stripe", "Redis", "BullMQ", "MySQL", "AWS"],
+    "features": [
+      "Stripe payments",
+      "Contracts",
+      "Demand letters",
+      "Dynamic fees",
+      "Redis caching",
+      "Background workers"
+    ],
+    "architecture": [
+      "Client actions enter Node APIs that validate and authorize every money-adjacent mutation.",
+      "Stripe webhooks and fee calculations run through idempotent BullMQ jobs.",
+      "Redis protects hot reads while MySQL remains the source of truth for financial state."
+    ],
+    "lessons": [
+      "Payment state should be event-driven, not click-optimistic.",
+      "Dynamic fees need auditable rules and safe retries when providers disagree.",
+      "Demand letter workflows are product logic first, PDF generation second."
+    ],
+    "caseStudySlugs": ["stripe", "demand-letters", "transaction-fees", "redis", "bullmq"]
+  },
+  {
+    "id": "practina",
+    "title": "Practina",
+    "subtitle": "Production AI Marketing Platform",
+    "type": "production",
+    "summary": "AI content generation, social publishing, scheduling, and gallery workflows built for reliability under real campaign load.",
+    "role": "Senior Full Stack Developer — AI integrations, async pipelines, and platform reliability.",
+    "stack": ["Node.js", "TypeScript", "OpenAI", "Google APIs", "Redis", "BullMQ"],
+    "features": [
+      "OpenAI generation",
+      "Social media publishing",
+      "Scheduling",
+      "Google APIs",
+      "Media gallery"
+    ],
+    "architecture": [
+      "Generation and publishing are separated so prompts never block social delivery.",
+      "BullMQ owns retries, rate limits, and provider outages across OpenAI and Google APIs.",
+      "Redis coordinates short-lived job and schedule state for bursty campaign activity."
+    ],
+    "lessons": [
+      "AI features need queues, cost controls, and explicit failure modes from day one.",
+      "Scheduling is a systems problem — not only a UI calendar.",
+      "Provider APIs fail; product flows should degrade without losing user intent."
+    ],
+    "caseStudySlugs": ["openai", "bullmq", "redis"]
+  },
+  {
+    "id": "ai-interview-copilot",
+    "title": "AI Interview Copilot",
+    "subtitle": "Personal Project",
+    "type": "personal",
+    "summary": "AI-powered interview preparation assistant that generates contextual interview responses and explanations using LLMs.",
+    "role": "Solo builder — product, API, and LLM interaction design.",
+    "stack": ["Next.js", "Node.js", "TypeScript", "OpenAI", "Tailwind"],
+    "features": [
+      "Contextual interview answers",
+      "Explanation generation",
+      "LLM-backed preparation flows"
+    ],
+    "architecture": [
+      "Thin Next.js client over a typed Node API for prompt construction and response shaping.",
+      "OpenAI calls stay behind explicit request boundaries for faster iteration and safer defaults."
+    ],
+    "lessons": [
+      "Good interview output depends more on context packaging than model novelty.",
+      "Explanations matter as much as answers when the product is about learning."
+    ],
+    "github": "https://github.com/robynsyngh/ai-interview-copilot",
+    "caseStudySlugs": ["openai"]
+  },
+  {
+    "id": "ai-credit-scoring-assistant",
+    "title": "AI Credit Scoring Assistant",
+    "subtitle": "Personal Project",
+    "type": "personal",
+    "summary": "AI-powered assistant for borrower analysis, credit evaluation, and explainable financial decision support.",
+    "role": "Solo builder — reasoning UX, evaluation flow, and explainability.",
+    "stack": ["Next.js", "Node.js", "TypeScript", "OpenAI"],
+    "features": [
+      "Borrower analysis",
+      "Credit evaluation",
+      "Explainable decision support"
+    ],
+    "architecture": [
+      "Structured borrower inputs feed an evaluation pipeline that returns decisions with rationale.",
+      "Model outputs are shaped for auditability instead of free-form persuasion."
+    ],
+    "lessons": [
+      "In credit-adjacent systems, explanation quality is part of the product.",
+      "Structured inputs beat long unstructured chats when judgments must be compared."
+    ],
+    "github": "https://github.com/robynsyngh/ai-credit-scoring-assistant",
+    "caseStudySlugs": ["openai"]
+  }
+]

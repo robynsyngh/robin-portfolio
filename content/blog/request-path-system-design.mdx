@@ -1,0 +1,18 @@
+---
+title: "Designing the Request Path"
+description: "A practical way to reason about client, API, cache, queue, datastore, and response."
+date: "2026-04-22"
+category: "System Design"
+published: true
+---
+
+Most production bugs are path bugs.
+
+Ask where work should finish:
+
+- in the request
+- in a worker
+- in a cache-backed read
+- in an external provider callback
+
+A clean request path makes those answers boring — and boring systems scale.

@@ -1,0 +1,141 @@
+[
+  {
+    "slug": "stripe",
+    "title": "Stripe",
+    "subtitle": "Webhook-driven payments that survive retries",
+    "summary": "How Credee treats Stripe as an event source of truth for money movement, fees, and recovery.",
+    "projectIds": ["credee"],
+    "problem": "User clicks are unreliable. Network timeouts, duplicate webhooks, and partial fee calculations can desync product state from what Stripe actually settled.",
+    "approach": "Accept payment intent quickly, then let verified Stripe events advance durable state through idempotent workers. Never trust a single browser response as the final ledger truth.",
+    "architecture": [
+      "API validates and creates local payment intent / pending records.",
+      "Stripe confirms settlement through signed webhooks.",
+      "BullMQ workers apply transitions idempotently using event IDs.",
+      "MySQL stores audit-friendly payment state for recovery and support."
+    ],
+    "lessons": [
+      "Design for duplicate delivery before you design for the happy path.",
+      "Fee logic belongs in deterministic domain code, not scattered controller branches.",
+      "Support tools need the event trail as much as the final status."
+    ],
+    "outcomes": [
+      "Clear pending vs settled states for clients and operators.",
+      "Safer retries when Stripe or workers hiccup under load."
+    ]
+  },
+  {
+    "slug": "redis",
+    "title": "Redis",
+    "subtitle": "Latency cuts without hiding consistency problems",
+    "summary": "Using Redis as a coordination and cache layer around FinTech and AI workloads without making it the source of truth.",
+    "projectIds": ["credee", "practina"],
+    "problem": "Hot paths and bursty campaign or payment traffic can overwhelm MySQL and slow every request if each call hits the database.",
+    "approach": "Cache short-lived reads, rate-limit edges, and back queue coordination with Redis while keeping durable records in MySQL.",
+    "architecture": [
+      "Read-through cache for hot non-critical lookups.",
+      "Queue and lock coordination for worker safety.",
+      "Explicit TTL and invalidation rules tied to write paths."
+    ],
+    "lessons": [
+      "A cache that lies quietly is worse than a slow query you can see.",
+      "Separate coordination keys from business entities.",
+      "Measure hit rate and stampede risk before calling Redis a win."
+    ],
+    "outcomes": [
+      "Lower latency on repetitive reads.",
+      "Better burst behavior for scheduling and payment side effects."
+    ]
+  },
+  {
+    "slug": "bullmq",
+    "title": "BullMQ",
+    "subtitle": "Durable work for payments and AI jobs",
+    "summary": "Turning brittle request/response paths into retryable worker pipelines for Credee and Practina.",
+    "projectIds": ["credee", "practina"],
+    "problem": "Payments, webhooks, OpenAI calls, and social publishing are too slow or too flaky to finish inside a single user request.",
+    "approach": "Enqueue domain jobs with retries, backoff, and dead-letter visibility. Keep public APIs focused on accept/validate/respond.",
+    "architecture": [
+      "API enqueues typed jobs after validation.",
+      "Workers own provider calls and state transitions.",
+      "Failed jobs surface with enough context to replay safely."
+    ],
+    "lessons": [
+      "Idempotency keys are part of the API contract.",
+      "Visibility beats silent retry loops.",
+      "Queue depth is a product metric, not only an infra chart."
+    ],
+    "outcomes": [
+      "1000+ background jobs handled through production worker pipelines.",
+      "Async product behavior that can recover after provider outages."
+    ]
+  },
+  {
+    "slug": "openai",
+    "title": "OpenAI",
+    "subtitle": "AI features with production boundaries",
+    "summary": "Integrating LLMs into Practina and personal systems without letting model latency or cost own the request path.",
+    "projectIds": ["practina", "ai-interview-copilot", "ai-credit-scoring-assistant"],
+    "problem": "LLM calls are variable, expensive, and failure-prone. Shipping them as blocking request handlers creates fragile products.",
+    "approach": "Shape prompts from structured product context, isolate generation behind APIs/queues, and return outputs that operators and users can evaluate.",
+    "architecture": [
+      "Structured input assembly before the model call.",
+      "Async execution for campaign-scale generation.",
+      "Response shaping for explanations, not only completions."
+    ],
+    "lessons": [
+      "Context packaging beats prompt theatrics.",
+      "Cost and timeout budgets belong in the design, not the postmortem.",
+      "Explainability is a UI requirement for decision-support AI."
+    ],
+    "outcomes": [
+      "AI workflows that degrade and retry instead of hanging users.",
+      "Reusable patterns across marketing and decision-support products."
+    ]
+  },
+  {
+    "slug": "demand-letters",
+    "title": "Demand Letters",
+    "subtitle": "Document workflows as production systems",
+    "summary": "Building demand letter generation as a durable business process inside Credee, not a one-off export script.",
+    "projectIds": ["credee"],
+    "problem": "Legal and financial documents require consistent inputs, regenerable outputs, and a clear audit path when numbers or parties change.",
+    "approach": "Model the letter as a workflow with validated data, versionable templates, and async rendering so the UI never waits on PDF assembly.",
+    "architecture": [
+      "Domain validation collects parties, amounts, and contractual context.",
+      "Workers generate artifacts from canonical state.",
+      "Stored outputs remain tied to the source record for regeneration."
+    ],
+    "lessons": [
+      "Document products are state machines with files attached.",
+      "Regeneration requirements should shape schema choices early.",
+      "Operators need to know which source values produced which artifact."
+    ],
+    "outcomes": [
+      "Repeatable letter generation from trusted domain state.",
+      "Cleaner separation between business rules and rendering."
+    ]
+  },
+  {
+    "slug": "transaction-fees",
+    "title": "Transaction Fees",
+    "subtitle": "Deterministic fee logic under real payment noise",
+    "summary": "Keeping Credee fee calculations predictable when payments, refunds, and provider events arrive out of order.",
+    "projectIds": ["credee"],
+    "problem": "Dynamic fees become support incidents when calculation rules are implicit, duplicated, or recomputed differently after retries.",
+    "approach": "Centralize fee rules, persist calculated snapshots with the transaction, and make recalculation explicit when inputs change.",
+    "architecture": [
+      "Fee policy evaluated in domain services.",
+      "Snapshot stored with transaction metadata.",
+      "Webhook-driven adjustments produce new events instead of silent rewrites."
+    ],
+    "lessons": [
+      "Money math needs fixtures and edge-case catalogs.",
+      "Never recompute historical fees from today’s policy without recording why.",
+      "Fee bugs feel like product trust bugs instantly."
+    ],
+    "outcomes": [
+      "More explainable fee outcomes for users and support.",
+      "Safer evolution of fee policy over time."
+    ]
+  }
+]

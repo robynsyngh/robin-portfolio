@@ -1,0 +1,13 @@
+{
+  "sessionKey": "robin-portfolio-loader-seen",
+  "steps": [
+    "Initializing Portfolio...",
+    "Loading Runtime...",
+    "Connecting Redis...",
+    "Connecting AWS...",
+    "Loading Workers...",
+    "Connecting Stripe...",
+    "Connecting OpenAI...",
+    "Portfolio Ready."
+  ]
+}

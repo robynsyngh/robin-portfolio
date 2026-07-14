@@ -1,0 +1,18 @@
+---
+title: "Stripe: Trust Events, Not Clicks"
+description: "Payment state should move with verified webhooks and idempotent workers."
+date: "2026-05-20"
+category: "Stripe"
+published: true
+---
+
+A browser response is a hint. A signed webhook is evidence.
+
+Durable payment systems:
+
+1. accept intent
+2. wait for provider truth
+3. apply transitions through idempotent workers
+4. keep an audit trail operators can trust
+
+Duplicate delivery is normal. Design for it before the first refund lands.

@@ -1,0 +1,25 @@
+{
+  "exploreLabel": "Explore",
+  "exploreHref": "#projects",
+  "resumeLabel": "Resume",
+  "nodes": [
+    { "id": "client", "label": "Client", "x": 8, "y": 18 },
+    { "id": "gateway", "label": "Gateway", "x": 28, "y": 34 },
+    { "id": "server", "label": "Server", "x": 50, "y": 22 },
+    { "id": "redis", "label": "Redis", "x": 72, "y": 38 },
+    { "id": "queue", "label": "Queue", "x": 42, "y": 58 },
+    { "id": "workers", "label": "Workers", "x": 64, "y": 72 },
+    { "id": "database", "label": "Database", "x": 84, "y": 56 },
+    { "id": "response", "label": "Response", "x": 22, "y": 78 }
+  ],
+  "links": [
+    ["client", "gateway"],
+    ["gateway", "server"],
+    ["server", "redis"],
+    ["server", "queue"],
+    ["queue", "workers"],
+    ["workers", "database"],
+    ["database", "response"],
+    ["response", "client"]
+  ]
+}

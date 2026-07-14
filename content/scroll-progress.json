@@ -1,0 +1,45 @@
+{
+  "label": "Request",
+  "stages": [
+    {
+      "id": "client",
+      "label": "Client",
+      "detail": "Ingress"
+    },
+    {
+      "id": "gateway",
+      "label": "Gateway",
+      "detail": "Route"
+    },
+    {
+      "id": "server",
+      "label": "Server",
+      "detail": "Validate"
+    },
+    {
+      "id": "redis",
+      "label": "Redis",
+      "detail": "Cache"
+    },
+    {
+      "id": "queue",
+      "label": "Queue",
+      "detail": "Enqueue"
+    },
+    {
+      "id": "database",
+      "label": "Database",
+      "detail": "Persist"
+    },
+    {
+      "id": "payments",
+      "label": "Payments",
+      "detail": "Charge"
+    },
+    {
+      "id": "response",
+      "label": "Response",
+      "detail": "200 OK"
+    }
+  ]
+}

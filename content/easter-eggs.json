@@ -1,0 +1,105 @@
+{
+  "eggs": [
+    {
+      "id": "hire",
+      "command": "sudo hire robin",
+      "summary": "Downloads resume."
+    },
+    {
+      "id": "npm-install",
+      "command": "npm install robin",
+      "summary": "Installs one senior engineer."
+    },
+    {
+      "id": "git-log",
+      "command": "git log",
+      "summary": "Career history."
+    },
+    {
+      "id": "redis-cli",
+      "command": "redis-cli",
+      "summary": "Fake cache."
+    },
+    {
+      "id": "stripe-test",
+      "command": "stripe test",
+      "summary": "Payment animation."
+    },
+    {
+      "id": "coffee",
+      "command": "coffee",
+      "summary": "Developer Energy +100%."
+    }
+  ],
+  "responses": {
+    "hire": [
+      "Authenticating hiring privileges...",
+      "Permission granted.",
+      "Downloading resume.pdf..."
+    ],
+    "npmInstall": [
+      "npm WARN deprecated junior-engineer@0.0.0: use robin instead",
+      "",
+      "added 1 senior full stack engineer",
+      "found 0 vulnerabilities"
+    ],
+    "redisCli": [
+      "127.0.0.1:6379> GET robin:status",
+      "\"open_to_next_challenge\"",
+      "127.0.0.1:6379> HGETALL robin:skills",
+      "1) \"runtime\"",
+      "2) \"node\"",
+      "3) \"queue\"",
+      "4) \"bullmq\"",
+      "5) \"payments\"",
+      "6) \"stripe\"",
+      "127.0.0.1:6379> TTL robin:availability",
+      "(integer) -1",
+      "127.0.0.1:6379> exit"
+    ],
+    "stripeTest": [
+      "Creating PaymentIntent...",
+      "pi_3Robin_test_00 → requires_confirmation",
+      "Confirming charge...",
+      "Webhook received: payment_intent.succeeded",
+      "Worker applied ledger transition.",
+      "Payment complete. Idempotency key reused safely."
+    ],
+    "coffee": [
+      "Brewing...",
+      "Developer Energy +100%.",
+      "Latency anxiety -40%.",
+      "Ready to ship."
+    ]
+  },
+  "konami": {
+    "sequence": [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "b",
+      "a"
+    ],
+    "unlockMessage": "Developer mode enabled."
+  },
+  "developerMode": {
+    "title": "Developer Mode",
+    "metrics": [
+      { "id": "fps", "label": "FPS" },
+      { "id": "memory", "label": "Memory" },
+      { "id": "workers", "label": "Workers" },
+      { "id": "apiCalls", "label": "API Calls" },
+      { "id": "latency", "label": "Latency" }
+    ]
+  },
+  "duck": {
+    "unlockTitle": "Debugging Master",
+    "unlockMessage": "You found the rubber duck. Consider the bug explained.",
+    "ariaLabel": "Hidden rubber duck"
+  }
+}

@@ -1,0 +1,27 @@
+# Portfolio Rules
+
+Always read PORTFOLIO_SPEC.md before implementing features.
+
+Follow the design language defined in PORTFOLIO_SPEC.md.
+
+Never introduce new colors.
+
+Never use gradients.
+
+Never use glassmorphism.
+
+Use monochrome design.
+
+Use GSAP for scroll animations.
+
+Use Framer Motion for component animations.
+
+All content must come from the content folder.
+
+Never hardcode project information.
+
+Always create reusable components.
+
+Maintain accessibility and SEO.
+
+Optimize for Lighthouse score above 95.

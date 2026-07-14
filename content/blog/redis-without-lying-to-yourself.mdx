@@ -1,0 +1,19 @@
+---
+title: "Redis Without Lying to Yourself"
+description: "Cache and coordination patterns that cut latency without burying consistency bugs."
+date: "2026-06-18"
+category: "Redis"
+published: true
+---
+
+Redis wins when you are honest about what it is storing.
+
+Use it for:
+
+- hot reads you can invalidate
+- short-lived coordination
+- rate limits and locks
+
+Do not use it as a quieter MySQL.
+
+A cache that returns stale money state is not a performance feature. It is an incident waiting for traffic.

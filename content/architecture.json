@@ -1,0 +1,79 @@
+{
+  "eyebrow": "Architecture",
+  "title": "How a request moves through production.",
+  "description": "A sticky walk through the stack I ship with — hover any node for purpose, usage, and the production story behind it.",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client",
+      "purpose": "Collect intent and render the product surface people actually use.",
+      "usage": "Browser and app clients initiating payments, content workflows, and AI actions.",
+      "challenges": "Keeping UX responsive while backend work is async and eventually consistent.",
+      "story": "Client interactions never assume a long request will finish in one round trip."
+    },
+    {
+      "id": "angular",
+      "label": "Angular",
+      "purpose": "Structure complex product UI with predictable state and strong typing.",
+      "usage": "Production admin and customer-facing surfaces for Credee and Practina.",
+      "challenges": "Large feature surfaces that still feel fast under real data volume.",
+      "story": "Feature modules stay isolated so payments and AI workstreams can evolve independently."
+    },
+    {
+      "id": "node",
+      "label": "Node",
+      "purpose": "Own business logic, auth boundaries, and orchestration across services.",
+      "usage": "TypeScript APIs for FinTech flows, AI jobs, webhooks, and internal tools.",
+      "challenges": "Protecting hot paths without turning every endpoint into a God function.",
+      "story": "APIs validate, authorize, then decide — sync response or durable background work."
+    },
+    {
+      "id": "redis",
+      "label": "Redis",
+      "purpose": "Cut latency and coordinate short-lived state without overloading MySQL.",
+      "usage": "Session/cache layers, rate limits, and queue backing for high-churn keys.",
+      "challenges": "Invalidation and backpressure when traffic spikes around payment events.",
+      "story": "Hot reads leave the database alone until cache truth must be refreshed."
+    },
+    {
+      "id": "bullmq",
+      "label": "BullMQ",
+      "purpose": "Make expensive or unreliable work durable, retryable, and observable.",
+      "usage": "Payment side effects, AI generation, scheduling, and outbound integrations.",
+      "challenges": "Idempotency, dead-letter handling, and visibility when jobs fail at 2am.",
+      "story": "If it can fail, retry, or take time — it belongs on a queue, not in a request."
+    },
+    {
+      "id": "workers",
+      "label": "Workers",
+      "purpose": "Execute domain jobs with isolation from the public request path.",
+      "usage": "Background processors for Stripe events, OpenAI tasks, and media workflows.",
+      "challenges": "Concurrency limits, poison messages, and keeping worker deploys safe.",
+      "story": "Workers turn product intent into completed work without blocking the client."
+    },
+    {
+      "id": "mysql",
+      "label": "MySQL",
+      "purpose": "Persist the source of truth for money, contracts, and product state.",
+      "usage": "Transactional records for payments, entities, and audit-friendly writes.",
+      "challenges": "Indexing, contention, and migrations under live production load.",
+      "story": "Every critical mutation is written for recovery, not just for the happy path."
+    },
+    {
+      "id": "stripe",
+      "label": "Stripe",
+      "purpose": "Move money with a payment platform that can survive reality.",
+      "usage": "Charges, fees, contracts-adjacent billing, and webhook-driven state changes.",
+      "challenges": "Webhook ordering, retries, and fee edge cases that disagree with documents.",
+      "story": "Payment state is driven by verified events — never by a single optimistic click."
+    },
+    {
+      "id": "response",
+      "label": "Response",
+      "purpose": "Return a clear outcome the client can trust and recover from.",
+      "usage": "Accepted jobs, completed actions, and explicit pending states for async work.",
+      "challenges": "Communicating in-flight work without pretending everything is already done.",
+      "story": "A good response is honest about what finished now and what will finish next."
+    }
+  ]
+}

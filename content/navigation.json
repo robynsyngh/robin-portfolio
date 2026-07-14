@@ -1,0 +1,12 @@
+[
+  { "label": "Home", "href": "/" },
+  { "label": "Journey", "href": "/#journey" },
+  { "label": "Skills", "href": "/#skills" },
+  { "label": "Projects", "href": "/#projects" },
+  { "label": "Architecture", "href": "/#architecture" },
+  { "label": "Case Studies", "href": "/#case-studies" },
+  { "label": "Blog", "href": "/blog" },
+  { "label": "Terminal", "href": "/#terminal" },
+  { "label": "Achievements", "href": "/#achievements" },
+  { "label": "Contact", "href": "/#contact" }
+]

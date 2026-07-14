@@ -1,0 +1,17 @@
+[
+  {
+    "id": "bht",
+    "company": "Bridging Healthcare Technologies",
+    "role": "Senior Full Stack Developer",
+    "start": "2021-10",
+    "end": "Present",
+    "summary": "Building production FinTech and AI platforms with a focus on reliability, async architecture, and developer experience.",
+    "highlights": [
+      "Joined in October 2021",
+      "Shipped Credee FinTech platform with Stripe payments",
+      "Built Practina AI marketing platform with OpenAI integrations",
+      "Led systems work across Redis, BullMQ, AWS, and MySQL",
+      "Owned payment webhooks, queue workers, and production reliability paths"
+    ]
+  }
+]
