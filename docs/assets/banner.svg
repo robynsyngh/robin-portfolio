@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-label="Robin Singh portfolio banner">
-  <title>Robin Singh  Senior Full Stack Engineer</title>
+  <title>Robin Singh ? Senior Full Stack Engineer</title>
   <rect width="1200" height="360" fill="#0a0a0a"/>
   <rect x="0" y="0" width="1200" height="360" fill="none" stroke="#222" stroke-width="1"/>
 
@@ -14,35 +14,20 @@
   <circle cx="96" cy="84" r="6" fill="#333"/>
   <circle cx="118" cy="84" r="6" fill="#333"/>
   <circle cx="140" cy="84" r="6" fill="#333"/>
-  <text x="180" y="89" fill="#666" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">robin@portfolio  runtime</text>
+  <text x="180" y="89" fill="#666" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">robin@portfolio ? runtime</text>
 
   <text x="96" y="140" fill="#888" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">$</text>
 
-  <text fill="#f5f5f5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" x="120" y="140">
-    <tspan>whoami</tspan>
-    <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="8s" repeatCount="indefinite"/>
-  </text>
+  <text fill="#f5f5f5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" x="120" y="140">whoami</text>
 
-  <text fill="#a3a3a3" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" x="96" y="176">
-    <tspan>Robin Singh ù Senior Full Stack Engineer</tspan>
-    <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.24;1" dur="8s" repeatCount="indefinite"/>
-  </text>
+  <text fill="#a3a3a3" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" x="96" y="176">Robin Singh ? Senior Full Stack Engineer</text>
 
-  <text fill="#888" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" x="96" y="220">
-    <tspan>$ </tspan>
-    <tspan fill="#f5f5f5">cat mission.txt</tspan>
-    <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.38;0.44;1" dur="8s" repeatCount="indefinite"/>
-  </text>
+  <text fill="#888" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" x="96" y="220">$ <tspan fill="#f5f5f5">cat mission.txt</tspan></text>
 
-  <text fill="#d4d4d4" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" x="96" y="256">
-    <tspan>Building scalable systems that solve real problems.</tspan>
-    <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.5;0.56;1" dur="8s" repeatCount="indefinite"/>
-  </text>
+  <text fill="#d4d4d4" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" x="96" y="256">Building scalable systems that solve real problems.</text>
 
   <!-- caret -->
-  <rect x="96" y="278" width="10" height="18" fill="#f5f5f5">
-    <animate attributeName="opacity" values="0;0;1;0;1;0;1" keyTimes="0;0.62;0.68;0.75;0.82;0.9;1" dur="8s" repeatCount="indefinite"/>
-  </rect>
+  <rect x="96" y="278" width="10" height="18" fill="#f5f5f5"/>
 
   <text x="980" y="300" fill="#444" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">robinsingh.dev</text>
 </svg>
