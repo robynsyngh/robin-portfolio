@@ -123,7 +123,7 @@ export function ArchitectureSection({ architecture }: ArchitectureSectionProps) 
 
                 <div className="mb-8 h-px w-full bg-border">
                   <div
-                    className="h-px bg-accent transition-[width] duration-300 ease-out motion-reduce:transition-none"
+                    className="h-px bg-signal transition-[width] duration-300 ease-out motion-reduce:transition-none"
                     style={{ width: `${progress * 100}%` }}
                   />
                 </div>
@@ -135,7 +135,7 @@ export function ArchitectureSection({ architecture }: ArchitectureSectionProps) 
                   />
                   <span
                     aria-hidden
-                    className="absolute left-[7px] top-2 w-px origin-top bg-accent transition-transform duration-300 ease-out motion-reduce:transition-none"
+                    className="absolute left-[7px] top-2 w-px origin-top bg-signal transition-transform duration-300 ease-out motion-reduce:transition-none"
                     style={{
                       height: "calc(100% - 1rem)",
                       transform: `scaleY(${Math.max(activeIndex, 0) / Math.max(nodes.length - 1, 1)})`,
@@ -150,6 +150,7 @@ export function ArchitectureSection({ architecture }: ArchitectureSectionProps) 
                       <li key={node.id}>
                         <button
                           type="button"
+                          data-cursor-text="view details"
                           aria-current={active ? "step" : undefined}
                           onMouseEnter={() => setHoveredId(node.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -169,9 +170,9 @@ export function ArchitectureSection({ architecture }: ArchitectureSectionProps) 
                             className={cn(
                               "relative z-10 h-3.5 w-3.5 shrink-0 rounded-full border transition-colors",
                               active
-                                ? "border-accent bg-accent"
+                                ? "border-signal bg-signal"
                                 : passed
-                                  ? "border-accent/55 bg-background"
+                                  ? "border-signal/55 bg-background"
                                   : "border-border bg-background",
                             )}
                           />

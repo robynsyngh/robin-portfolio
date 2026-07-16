@@ -75,7 +75,12 @@ export function SystemViz({ nodes, links }: SystemVizProps) {
         })}
 
         {nodes.map((node, index) => (
-          <g key={node.id}>
+          <g
+            key={node.id}
+            className="pointer-events-auto"
+            data-cursor-hover
+            data-cursor-text={node.label}
+          >
             <motion.rect
               x={node.x - 5.5}
               y={node.y - 3.2}

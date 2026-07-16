@@ -22,6 +22,22 @@ const UnlockToast = dynamic(
   { ssr: false },
 );
 
+const RubberDuck = dynamic(
+  () =>
+    import("@/components/easter-eggs/rubber-duck").then(
+      (module) => module.RubberDuck,
+    ),
+  { ssr: false },
+);
+
+const CustomCursor = dynamic(
+  () =>
+    import("@/components/cursor/custom-cursor").then(
+      (module) => module.CustomCursor,
+    ),
+  { ssr: false },
+);
+
 type ProvidersProps = {
   loader: LoaderContent;
   easterEggs: EasterEggsContent;
@@ -35,6 +51,8 @@ export function Providers({ loader, easterEggs, children }: ProvidersProps) {
         <PortfolioLoader loader={loader}>{children}</PortfolioLoader>
         <DeveloperModeHud />
         <UnlockToast />
+        <RubberDuck />
+        <CustomCursor />
       </EasterEggProvider>
     </SmoothScroll>
   );

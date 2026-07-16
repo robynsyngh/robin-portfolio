@@ -87,7 +87,7 @@ export function RequestTracker({ progress }: RequestTrackerProps) {
         </div>
         <div className="mt-2 h-px w-full bg-border">
           <div
-            className="h-px bg-accent transition-[width] duration-300 motion-reduce:transition-none"
+            className="h-px bg-signal transition-[width] duration-300 motion-reduce:transition-none"
             style={{ width: `${progressRatio * 100}%` }}
           />
         </div>
@@ -104,7 +104,7 @@ export function RequestTracker({ progress }: RequestTrackerProps) {
           visible ? "opacity-100" : "opacity-0",
         )}
       >
-        <div className="pointer-events-auto flex flex-col items-end gap-4">
+        <div className="pointer-events-auto flex flex-col items-end gap-4 border border-border bg-background px-4 py-4">
           <div className="text-right">
             <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted">
               {progress.label}
@@ -121,7 +121,7 @@ export function RequestTracker({ progress }: RequestTrackerProps) {
             />
             <span
               aria-hidden
-              className="absolute right-[5px] top-2 w-px origin-top bg-accent transition-transform duration-300 ease-out motion-reduce:transition-none"
+              className="absolute right-[5px] top-2 w-px origin-top bg-signal transition-transform duration-300 ease-out motion-reduce:transition-none"
               style={{
                 height: "calc(100% - 1rem)",
                 transform: `scaleY(${progressRatio})`,
@@ -136,6 +136,7 @@ export function RequestTracker({ progress }: RequestTrackerProps) {
                 <li key={stage.id} className="relative flex items-center gap-3 py-1.5">
                   <button
                     type="button"
+                    data-cursor-text="view"
                     onClick={() => scrollToStage(index)}
                     aria-current={active ? "step" : undefined}
                     className={cn(
@@ -154,9 +155,9 @@ export function RequestTracker({ progress }: RequestTrackerProps) {
                     className={cn(
                       "relative z-10 h-2.5 w-2.5 rounded-full border transition-colors",
                       active
-                        ? "border-accent bg-accent"
+                        ? "border-signal bg-signal"
                         : complete
-                          ? "border-accent/50 bg-background"
+                          ? "border-signal/50 bg-background"
                           : "border-border bg-background",
                     )}
                   />

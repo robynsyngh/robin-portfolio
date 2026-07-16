@@ -1,57 +1,107 @@
 {
   "eyebrow": "Skills",
   "title": "Tools chosen for reliability under load.",
-  "description": "Production usage, constraints, and where each skill earns its place.",
+  "description": "Production usage, constraints, and where each skill earns its place — ordered by what the market is hiring for right now.",
   "items": [
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "years": 4.5,
+      "overview": "Typed contracts across APIs, workers, AI pipelines, and frontend surfaces.",
+      "projects": ["Credee", "Practina", "AI Interview Copilot", "AI Credit Scoring Assistant"],
+      "productionUsage": "End-to-end typing for payment logic, LLM I/O, and safer refactors in production systems.",
+      "challenges": "Balancing strictness with delivery speed across two production codebases.",
+      "favoriteUse": "Domain models that make invalid payment and AI response states hard to represent."
+    },
     {
       "id": "nodejs",
       "name": "Node.js",
-      "years": 5,
+      "years": 4.5,
       "overview": "Primary runtime for production APIs, workers, and real-time services.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "Core backend runtime for FinTech and AI platforms.",
+      "productionUsage": "Core backend runtime for the financing engine, webhooks, and AI job workers.",
       "challenges": "Keeping long-running services resilient under payment and queue load.",
       "favoriteUse": "Async service boundaries with clear failure modes."
     },
     {
-      "id": "typescript",
-      "name": "TypeScript",
-      "years": 5,
-      "overview": "Typed contracts across APIs, workers, and frontend surfaces.",
-      "projects": ["Credee", "Practina", "AI Interview Copilot"],
-      "productionUsage": "End-to-end typing for safer refactors in production systems.",
-      "challenges": "Balancing strictness with delivery speed in large codebases.",
-      "favoriteUse": "Domain models that make invalid states hard to represent."
+      "id": "openai",
+      "name": "OpenAI",
+      "years": 4,
+      "overview": "Production LLM integrations and prompt engineering — content generation, sentiment analysis, and decision support, not demos.",
+      "projects": ["Practina", "AI Interview Copilot", "AI Credit Scoring Assistant"],
+      "productionUsage": "AI content pipelines, review sentiment analysis, and send-time decisioning that lifted engagement 40% and saved 15+ hours weekly.",
+      "challenges": "Latency, cost control, and output quality at real campaign scale — not just a single prompt.",
+      "favoriteUse": "Turning prompt engineering into repeatable, queued, cost-aware product workflows."
+    },
+    {
+      "id": "postgresql",
+      "name": "PostgreSQL",
+      "years": 2,
+      "overview": "Primary relational store for the payment financing engine — schema, indexing, and query performance under load.",
+      "projects": ["Credee"],
+      "productionUsage": "Transactional source of truth for financing, installment, and ledger data.",
+      "challenges": "Indexing and query tuning that cut API P99 latency 60% and DB CPU utilization 35%.",
+      "favoriteUse": "Query plans that stay predictable as payment volume grows."
+    },
+    {
+      "id": "react",
+      "name": "React",
+      "years": 2,
+      "overview": "Component-driven dashboards for campaign analytics and lead management.",
+      "projects": ["Practina"],
+      "productionUsage": "Frontend surfaces for AI campaign performance and reputation monitoring.",
+      "challenges": "Keeping dashboards fast with real-time data and frequent re-renders.",
+      "favoriteUse": "Composable views over async, frequently-changing product data."
     },
     {
       "id": "angular",
       "name": "Angular",
-      "years": 4,
+      "years": 4.5,
       "overview": "Frontend delivery for complex product workflows and admin surfaces.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "Application shell, forms, and operational UI for production products.",
+      "productionUsage": "Application shell, forms, and operational UI for both production products.",
       "challenges": "Keeping large frontend surfaces fast and maintainable over years.",
       "favoriteUse": "Structured UI for money and ops workflows that cannot afford ambiguity."
     },
     {
-      "id": "express",
-      "name": "Express",
-      "years": 5,
-      "overview": "HTTP layer for REST APIs, webhooks, and service ingress.",
+      "id": "aws",
+      "name": "AWS",
+      "years": 4.5,
+      "overview": "Cloud infrastructure for compute, storage, and delivery of production services.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "API gateway surface for product and integration traffic.",
-      "challenges": "Consistent validation, auth, and error shape across many routes.",
-      "favoriteUse": "Thin controllers over clear domain services."
+      "productionUsage": "EC2, S3, and Lambda for hosting, media storage, and event-driven jobs.",
+      "challenges": "Keeping environments boring, observable, and cost-aware.",
+      "favoriteUse": "Reliable deploy and runtime paths teams can trust."
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "years": 4,
+      "overview": "Containerized services and CI/CD pipelines for consistent, repeatable deploys.",
+      "projects": ["Credee", "Practina"],
+      "productionUsage": "Docker + Jenkins CI/CD cutting release time 65% with zero-downtime deployments.",
+      "challenges": "Image size, build caching, and parity between local and production environments.",
+      "favoriteUse": "Making \"works on my machine\" a non-issue."
     },
     {
       "id": "redis",
       "name": "Redis",
-      "years": 4,
+      "years": 4.5,
       "overview": "Caching, coordination, and queue infrastructure for high-throughput paths.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "Latency-sensitive caching and background job coordination.",
+      "productionUsage": "Latency-sensitive caching and background job coordination behind BullMQ.",
       "challenges": "Cache invalidation and backpressure under burst traffic.",
       "favoriteUse": "Cutting hot-path latency without hiding consistency issues."
+    },
+    {
+      "id": "kafka",
+      "name": "Kafka",
+      "years": 1,
+      "overview": "Event-driven messaging alongside Redis/BullMQ for durable, ordered event delivery.",
+      "projects": ["Credee"],
+      "productionUsage": "Event orchestration for payment and reconciliation events that need ordered, replayable delivery.",
+      "challenges": "Consumer lag and partitioning decisions under bursty payment traffic.",
+      "favoriteUse": "Decoupling producers from consumers without losing event order."
     },
     {
       "id": "bullmq",
@@ -59,59 +109,59 @@
       "years": 4,
       "overview": "Reliable background processing for payments, AI jobs, and async workflows.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "Worker pipelines for durable async work.",
-      "challenges": "Retries, idempotency, and observability across job types.",
+      "productionUsage": "Worker pipelines processing hundreds of thousands of daily jobs at 99.9% event delivery reliability.",
+      "challenges": "Retries, idempotency, and dead-letter recovery across job types.",
       "favoriteUse": "Turning brittle request/response flows into durable work."
+    },
+    {
+      "id": "kubernetes",
+      "name": "Kubernetes",
+      "years": 1,
+      "overview": "Container orchestration for scaling and managing production service deployments.",
+      "projects": ["Credee"],
+      "productionUsage": "Deployment and scaling policies for containerized backend services.",
+      "challenges": "Right-sizing resource limits without over-provisioning.",
+      "favoriteUse": "Predictable rollouts and self-healing service instances."
     },
     {
       "id": "stripe",
       "name": "Stripe",
       "years": 3,
-      "overview": "Payments, webhooks, and fee logic in production FinTech systems.",
-      "projects": ["Credee"],
-      "productionUsage": "Payment processing and webhook-driven state transitions.",
-      "challenges": "Idempotent webhook handling and fee edge cases.",
-      "favoriteUse": "Designing payment systems that survive reality."
-    },
-    {
-      "id": "aws",
-      "name": "AWS",
-      "years": 3,
-      "overview": "Cloud infrastructure for compute, storage, and delivery of production services.",
+      "overview": "Stripe Connect OBO flows, Terminal S700, and fee logic — light exposure during Practina, now the core payment rail at Credee.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "Hosting, artifacts, and supporting services for live platforms.",
-      "challenges": "Keeping environments boring, observable, and cost-aware.",
-      "favoriteUse": "Reliable deploy and runtime paths teams can trust."
+      "productionUsage": "Payout orchestration and reconciliation across 1,000+ merchants, plus in-person payments via Terminal S700.",
+      "challenges": "Idempotent webhook handling and fee edge cases at merchant scale.",
+      "favoriteUse": "Designing payment systems that survive reality."
     },
     {
       "id": "mysql",
       "name": "MySQL",
-      "years": 4,
+      "years": 4.5,
       "overview": "Transactional data store for product state, payments, and audit trails.",
       "projects": ["Credee", "Practina"],
-      "productionUsage": "Source of truth for financial and workflow data.",
+      "productionUsage": "Source of truth for financial and workflow data alongside PostgreSQL.",
       "challenges": "Schema evolution and query performance under growing load.",
       "favoriteUse": "Clear transactional boundaries around money and status changes."
     },
     {
-      "id": "socketio",
-      "name": "Socket.IO",
-      "years": 3,
-      "overview": "Real-time channels for live product updates and collaboration signals.",
-      "projects": ["Practina"],
-      "productionUsage": "Pushing state changes without brittle polling loops.",
-      "challenges": "Reconnect behavior and fan-out under concurrent clients.",
-      "favoriteUse": "Making long-running work feel immediate in the UI."
+      "id": "express",
+      "name": "Express",
+      "years": 4.5,
+      "overview": "HTTP layer for REST APIs, webhooks, and service ingress.",
+      "projects": ["Credee", "Practina"],
+      "productionUsage": "API gateway surface for payment, AI, and integration traffic.",
+      "challenges": "Consistent validation, auth, and error shape across many routes.",
+      "favoriteUse": "Thin controllers over clear domain services."
     },
     {
-      "id": "openai",
-      "name": "OpenAI",
-      "years": 2,
-      "overview": "LLM integrations for generation, assistance, and decision support.",
-      "projects": ["Practina", "AI Interview Copilot", "AI Credit Scoring Assistant"],
-      "productionUsage": "AI features with queueing, retries, and cost controls.",
-      "challenges": "Latency, reliability, and prompt/output quality in production.",
-      "favoriteUse": "Grounding AI features in clear product outcomes."
+      "id": "socketio",
+      "name": "Socket.IO",
+      "years": 4,
+      "overview": "Real-time channels for live product updates and collaboration signals.",
+      "projects": ["Practina"],
+      "productionUsage": "Real-time tracking and notifications that reduced support escalations.",
+      "challenges": "Reconnect behavior and fan-out under concurrent clients.",
+      "favoriteUse": "Making long-running work feel immediate in the UI."
     }
   ]
 }

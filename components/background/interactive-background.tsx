@@ -34,6 +34,15 @@ type Signal = {
   ambient: boolean;
 };
 
+type Ripple = {
+  x: number;
+  y: number;
+  startedAt: number;
+};
+
+const RIPPLE_LIFETIME_MS = 750;
+const RIPPLE_MAX_RADIUS = 140;
+
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
@@ -85,6 +94,17 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
       getComputedStyle(document.documentElement).getPropertyValue("--font-geist-mono").trim() ||
       "ui-monospace, SFMono-Regular, Menlo, monospace";
 
+    const signalHex =
+      getComputedStyle(document.documentElement).getPropertyValue("--signal").trim() || "#34d399";
+    const signalRgb = (() => {
+      const hex = signalHex.replace("#", "");
+      if (hex.length !== 6) return null;
+      const r = Number.parseInt(hex.slice(0, 2), 16);
+      const g = Number.parseInt(hex.slice(2, 4), 16);
+      const b = Number.parseInt(hex.slice(4, 6), 16);
+      return `${r}, ${g}, ${b}`;
+    })();
+
     const pointer = {
       x: window.innerWidth * 0.9,
       y: window.innerHeight * 0.42,
@@ -105,6 +125,10 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
     // Ambient light — wanders slowly through the rightmost margin so the
     // field always feels alive, even at rest with no pointer/scroll input.
     const ambient = { x: 0, y: 0 };
+
+    // Click ripples — a quick signal-colored pulse from wherever the user
+    // clicks, giving every interaction a tiny bit of tactile feedback.
+    const ripples: Ripple[] = [];
 
     const nodes: RuntimeNode[] = background.nodes.map((node) => ({
       ...node,
@@ -633,6 +657,29 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
         ctx.stroke();
       }
 
+      if (ripples.length) {
+        for (let i = ripples.length - 1; i >= 0; i -= 1) {
+          const ripple = ripples[i];
+          if (!ripple) continue;
+          const age = time - ripple.startedAt;
+          if (age > RIPPLE_LIFETIME_MS) {
+            ripples.splice(i, 1);
+            continue;
+          }
+          const t = age / RIPPLE_LIFETIME_MS;
+          const eased = easeOutCubic(t);
+          const r = eased * RIPPLE_MAX_RADIUS;
+          const alpha = (1 - t) * 0.4 * introEase;
+          ctx.strokeStyle = signalRgb
+            ? `rgba(${signalRgb}, ${alpha})`
+            : `rgba(52, 211, 153, ${alpha})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(ripple.x, ripple.y, r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
       // Final mask — covers any stroke that crossed into copy
       drawContentMask();
 
@@ -650,6 +697,7 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
       pointerTarget.x = event.clientX;
       pointerTarget.y = event.clientY;
       pointerActive = true;
+      ripples.push({ x: event.clientX, y: event.clientY, startedAt: performance.now() });
     };
 
     const onPointerLeave = () => {
@@ -704,6 +752,7 @@ export function InteractiveBackground({ background }: InteractiveBackgroundProps
     <canvas
       ref={canvasRef}
       aria-hidden
+      data-print-hide
       className="pointer-events-none fixed inset-0 z-0"
     />
   );

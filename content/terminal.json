@@ -1,15 +1,16 @@
 {
   "eyebrow": "Terminal",
   "title": "Talk to the portfolio like a system.",
-  "description": "Type help to see available commands. Easter eggs encouraged.",
+  "description": "Type help to see available commands. Ask it anything about my work. Easter eggs encouraged.",
   "prompt": "robin@portfolio:~$",
   "welcome": [
     "Robin Singh Portfolio Runtime v1.0",
-    "Type `help` to list commands. Type something weird on purpose."
+    "AI mode online. Type `ask <question>` or `help` to list commands."
   ],
-  "unknown": "command not found: {{command}}. Try `help`.",
+  "unknown": "command not found: {{command}}. Try `help` or `ask <question>`.",
   "commands": [
     { "name": "help", "description": "List available commands" },
+    { "name": "ask <question>", "description": "Ask AI about my experience, projects & systems" },
     { "name": "about", "description": "Engineering summary" },
     { "name": "whoami", "description": "Identity check" },
     { "name": "projects", "description": "List featured projects" },

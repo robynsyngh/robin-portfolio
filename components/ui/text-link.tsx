@@ -12,7 +12,7 @@ export function TextLink({ className, subtle = false, children, ...props }: Text
         "transition-opacity duration-200",
         subtle
           ? "text-muted hover:text-foreground hover:opacity-100"
-          : "text-foreground underline decoration-border underline-offset-4 hover:decoration-accent/50",
+          : "link-underline text-foreground",
         className,
       )}
       {...props}

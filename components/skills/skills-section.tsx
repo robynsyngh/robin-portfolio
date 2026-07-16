@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Badge, Container, Text } from "@/components/ui";
 import type { Skill, SkillsContent } from "@/lib/types";
@@ -13,107 +13,85 @@ type SkillsSectionProps = {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-function SkillItem({
-  skill,
-  index,
-  open,
-  onToggle,
-  reducedMotion,
-}: {
-  skill: Skill;
-  index: number;
-  open: boolean;
-  onToggle: () => void;
-  reducedMotion: boolean;
-}) {
+const SkillTab = forwardRef<
+  HTMLButtonElement,
+  {
+    skill: Skill;
+    selected: boolean;
+    onSelect: () => void;
+    onKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
+  }
+>(function SkillTab({ skill, selected, onSelect, onKeyDown }, ref) {
   return (
-    <li className="border-b border-border">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-label={`${open ? "Collapse" : "Expand"} ${skill.name}, ${skill.years} years`}
-        onClick={onToggle}
-        className="group flex w-full items-start gap-4 py-6 text-left md:gap-5 md:py-7"
-      >
-        <span className="w-8 shrink-0 pt-1 font-mono text-sm tracking-wide text-muted md:w-10">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-
-        <span className="min-w-0 flex-1">
-          <span className="flex items-start justify-between gap-4">
-            <span className="min-w-0 font-sans text-2xl font-medium tracking-tight text-foreground transition-opacity group-hover:opacity-80 md:text-3xl">
-              {skill.name}
-              <span className="ml-3 font-mono text-xs font-normal tracking-[0.14em] text-muted">
-                · {skill.years} yrs
-              </span>
-            </span>
-            <span
-              aria-hidden
-              className={cn(
-                "mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center border border-border font-mono text-sm text-muted transition-colors",
-                open && "border-accent text-foreground",
-              )}
-            >
-              {open ? "–" : "+"}
-            </span>
-          </span>
-          <span className="mt-3 block max-w-2xl font-sans text-base leading-relaxed text-muted md:text-lg">
-            {skill.overview}
-          </span>
-        </span>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {open ? (
-          <motion.div
-            initial={reducedMotion ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
-            transition={{ duration: reducedMotion ? 0 : 0.35, ease }}
-            className="overflow-hidden"
-          >
-            <div className="grid gap-8 border-t border-border pb-8 pl-12 pt-6 md:grid-cols-2 md:pl-[3.75rem]">
-              <div>
-                <Text as="p" variant="label">
-                  Production usage
-                </Text>
-                <Text as="p" variant="muted" className="mt-3">
-                  {skill.productionUsage}
-                </Text>
-                <Text as="p" variant="label" className="mt-6">
-                  Challenges
-                </Text>
-                <Text as="p" variant="muted" className="mt-3">
-                  {skill.challenges}
-                </Text>
-              </div>
-              <div>
-                <Text as="p" variant="label">
-                  Favorite use
-                </Text>
-                <Text as="p" variant="muted" className="mt-3">
-                  {skill.favoriteUse}
-                </Text>
-                <Text as="p" variant="label" className="mt-6">
-                  Projects
-                </Text>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {skill.projects.map((project) => (
-                    <Badge key={project}>{project}</Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </li>
+    <button
+      ref={ref}
+      type="button"
+      role="tab"
+      data-cursor-text="view"
+      id={`skill-tab-${skill.id}`}
+      aria-selected={selected}
+      aria-controls="skill-panel"
+      tabIndex={selected ? 0 : -1}
+      onClick={onSelect}
+      onKeyDown={onKeyDown}
+      className={cn(
+        "inline-flex items-center gap-2 rounded-sm border px-4 py-2.5 font-mono text-sm tracking-wide transition-colors",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal",
+        selected
+          ? "border-signal bg-surface text-foreground"
+          : "border-border text-muted hover:border-foreground/40 hover:text-foreground",
+      )}
+    >
+      {skill.name}
+      <span className={cn("text-xs", selected ? "text-foreground/60" : "text-muted/70")}>
+        {skill.years}y
+      </span>
+    </button>
   );
-}
+});
 
 export function SkillsSection({ skills }: SkillsSectionProps) {
   const reducedMotion = usePrefersReducedMotion();
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState(skills.items[0]?.id ?? "");
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const selectedIndex = Math.max(
+    skills.items.findIndex((skill) => skill.id === selectedId),
+    0,
+  );
+  const selected = skills.items[selectedIndex];
+
+  const focusTab = (index: number) => {
+    const target = skills.items[index];
+    if (!target) return;
+    setSelectedId(target.id);
+    tabRefs.current.get(target.id)?.focus();
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        focusTab((selectedIndex + 1) % skills.items.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        focusTab((selectedIndex - 1 + skills.items.length) % skills.items.length);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusTab(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusTab(skills.items.length - 1);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <section id="skills" className="scroll-mt-24 py-[var(--space-section)]">
@@ -130,21 +108,103 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
           </Text>
         </header>
 
-        {/* Keep the accordion in the reading column so controls never collide with the field */}
-        <ul className="max-w-3xl border-t border-border">
+        <div
+          role="tablist"
+          aria-label={skills.title}
+          className="flex flex-wrap gap-2"
+        >
           {skills.items.map((skill, index) => (
-            <SkillItem
+            <motion.div
               key={skill.id}
-              skill={skill}
-              index={index}
-              open={openId === skill.id}
-              reducedMotion={reducedMotion}
-              onToggle={() =>
-                setOpenId((current) => (current === skill.id ? null : skill.id))
-              }
-            />
+              initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{
+                duration: reducedMotion ? 0 : 0.35,
+                delay: reducedMotion ? 0 : index * 0.03,
+                ease,
+              }}
+            >
+              <SkillTab
+                ref={(node) => {
+                  if (node) {
+                    tabRefs.current.set(skill.id, node);
+                  } else {
+                    tabRefs.current.delete(skill.id);
+                  }
+                }}
+                skill={skill}
+                selected={skill.id === selectedId}
+                onSelect={() => setSelectedId(skill.id)}
+                onKeyDown={onKeyDown}
+              />
+            </motion.div>
           ))}
-        </ul>
+        </div>
+
+        <div
+          id="skill-panel"
+          role="tabpanel"
+          aria-labelledby={selected ? `skill-tab-${selected.id}` : undefined}
+          className="mt-8 border border-border bg-surface p-6 md:p-8"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            {selected ? (
+              <motion.div
+                key={selected.id}
+                initial={reducedMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reducedMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: reducedMotion ? 0 : 0.22, ease }}
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-4">
+                  <Text as="h3" variant="title">
+                    {selected.name}
+                  </Text>
+                  <Text as="p" variant="mono" className="text-foreground/70">
+                    {selected.years} years in production
+                  </Text>
+                </div>
+                <Text as="p" variant="muted" className="mt-3 max-w-2xl">
+                  {selected.overview}
+                </Text>
+
+                <div className="mt-8 grid gap-8 border-t border-border pt-8 md:grid-cols-2">
+                  <div>
+                    <Text as="p" variant="label">
+                      Production usage
+                    </Text>
+                    <Text as="p" variant="muted" className="mt-3">
+                      {selected.productionUsage}
+                    </Text>
+                    <Text as="p" variant="label" className="mt-6">
+                      Challenges
+                    </Text>
+                    <Text as="p" variant="muted" className="mt-3">
+                      {selected.challenges}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text as="p" variant="label">
+                      Favorite use
+                    </Text>
+                    <Text as="p" variant="muted" className="mt-3">
+                      {selected.favoriteUse}
+                    </Text>
+                    <Text as="p" variant="label" className="mt-6">
+                      Projects
+                    </Text>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {selected.projects.map((project) => (
+                        <Badge key={project}>{project}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
       </Container>
     </section>
   );

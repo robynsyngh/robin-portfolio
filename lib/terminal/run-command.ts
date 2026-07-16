@@ -41,6 +41,16 @@ export function runTerminalCommand(
     return { lines: [], clear: true };
   }
 
+  if (normalized === "ask" || normalized === "ask ") {
+    return {
+      lines: [
+        "Usage: ask <question>",
+        "e.g. ask what did you build at Credee?",
+        "e.g. ask why redis over just mysql?",
+      ],
+    };
+  }
+
   if (normalized === "help") {
     const standard = terminal.commands.map(
       (command) => `${command.name.padEnd(14)} ${command.description}`,

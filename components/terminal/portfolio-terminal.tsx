@@ -44,6 +44,8 @@ export function PortfolioTerminal({ context }: PortfolioTerminalProps) {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [effect, setEffect] = useState<"stripe" | "coffee" | "npm" | null>(null);
+  const [isAsking, setIsAsking] = useState(false);
+  const askHistoryRef = useRef<{ role: "user" | "assistant"; text: string }[]>([]);
 
   const eggHints = useMemo(
     () => context.easterEggs.eggs.slice(0, 3).map((egg) => egg.command),
@@ -72,6 +74,79 @@ export function PortfolioTerminal({ context }: PortfolioTerminalProps) {
     ]);
   };
 
+  const appendOutput = (id: string, text: string) => {
+    setHistory((current) => [...current, { id, type: "output", text }]);
+  };
+
+  const updateOutput = (id: string, text: string) => {
+    setHistory((current) =>
+      current.map((item) => (item.id === id ? { ...item, text } : item)),
+    );
+  };
+
+  const askAI = async (question: string) => {
+    if (isAsking) {
+      appendOutput(
+        `${Date.now()}-busy`,
+        "Still thinking about the last question — hang tight.",
+      );
+      return;
+    }
+
+    setIsAsking(true);
+    const outputId = `${Date.now()}-ai`;
+    appendOutput(outputId, "…");
+
+    let accumulated = "";
+
+    try {
+      const response = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          history: askHistoryRef.current,
+        }),
+      });
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        if (!chunk) continue;
+
+        accumulated += chunk;
+        updateOutput(outputId, accumulated);
+      }
+
+      if (!accumulated.trim()) {
+        accumulated = "No response. Try rephrasing, or use `about` / `projects`.";
+        updateOutput(outputId, accumulated);
+      }
+
+      askHistoryRef.current = [
+        ...askHistoryRef.current,
+        { role: "user" as const, text: question },
+        { role: "assistant" as const, text: accumulated },
+      ].slice(-8);
+    } catch {
+      updateOutput(
+        outputId,
+        "AI mode hit a network error. Try again, or use `about` / `projects` / `contact`.",
+      );
+    } finally {
+      setIsAsking(false);
+    }
+  };
+
   const run = (raw: string) => {
     const input = raw.trim();
     if (!input) {
@@ -89,6 +164,12 @@ export function PortfolioTerminal({ context }: PortfolioTerminalProps) {
     setCommandHistory((current) => [input, ...current].slice(0, 50));
     setHistoryIndex(-1);
     setValue("");
+
+    const askMatch = /^ask\s+(.+)$/i.exec(input);
+    if (askMatch) {
+      void askAI(askMatch[1].trim());
+      return;
+    }
 
     const result = runTerminalCommand(input, context);
 
@@ -125,7 +206,7 @@ export function PortfolioTerminal({ context }: PortfolioTerminalProps) {
   return (
     <section id="terminal" className="scroll-mt-24 py-[var(--space-section)]">
       <Container>
-        <header className="mb-10 max-w-3xl md:mb-12">
+        <header className="mb-12 max-w-3xl md:mb-16">
           <Text as="p" variant="label">
             {terminal.eyebrow}
           </Text>
@@ -199,7 +280,7 @@ export function PortfolioTerminal({ context }: PortfolioTerminalProps) {
                       <p>payment_intent → processing</p>
                       <div className="h-px w-full bg-border">
                         <motion.div
-                          className="h-px bg-accent"
+                          className="h-px bg-signal"
                           initial={reducedMotion ? false : { width: "0%" }}
                           animate={{ width: "100%" }}
                           transition={{

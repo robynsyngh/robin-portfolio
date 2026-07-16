@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Container, Text } from "@/components/ui";
+import { AnimatedNumber, Container, Text, TiltCard } from "@/components/ui";
 import type { AchievementsContent } from "@/lib/types";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
@@ -41,32 +41,35 @@ export function AchievementsSection({ achievements }: AchievementsSectionProps) 
               }}
               className="group border-b border-r border-border"
             >
-              <article className="flex h-full min-h-[14rem] flex-col justify-between p-6 md:p-8 lg:min-h-[16rem]">
-                <div className="flex items-start justify-between gap-4">
-                  <Text as="p" variant="mono" className="text-muted">
-                    {String(index + 1).padStart(2, "0")}
-                  </Text>
-                  <Text
-                    as="p"
-                    variant="label"
-                    className="text-right transition-colors group-hover:text-foreground"
-                  >
-                    {item.label}
-                  </Text>
-                </div>
+              <TiltCard>
+                <article className="flex h-full min-h-[14rem] flex-col justify-between p-6 md:p-8 lg:min-h-[16rem]">
+                  <div className="flex items-start justify-between gap-4">
+                    <Text as="p" variant="mono" className="text-muted">
+                      {String(index + 1).padStart(2, "0")}
+                    </Text>
+                    <Text
+                      as="p"
+                      variant="label"
+                      className="text-right transition-colors group-hover:text-foreground"
+                    >
+                      {item.label}
+                    </Text>
+                  </div>
 
-                <div className="mt-10">
-                  <p className="font-sans text-4xl font-medium tracking-tight text-foreground md:text-5xl">
-                    {item.value}
-                  </p>
-                  <Text as="p" variant="mono" className="mt-2 text-foreground/80">
-                    {item.detail}
-                  </Text>
-                  <Text as="p" variant="muted" className="mt-4 max-w-sm text-base">
-                    {item.description}
-                  </Text>
-                </div>
-              </article>
+                  <div className="mt-10">
+                    <AnimatedNumber
+                      value={item.value}
+                      className="block font-sans text-4xl font-medium tracking-tight text-foreground md:text-5xl"
+                    />
+                    <Text as="p" variant="mono" className="mt-2 text-foreground/80">
+                      {item.detail}
+                    </Text>
+                    <Text as="p" variant="muted" className="mt-4 max-w-sm text-base">
+                      {item.description}
+                    </Text>
+                  </div>
+                </article>
+              </TiltCard>
             </motion.li>
           ))}
         </ul>

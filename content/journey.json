@@ -6,38 +6,50 @@
     {
       "id": "joined",
       "date": "Oct 2021",
-      "title": "Joined Bridging Healthcare Technologies",
-      "detail": "Started building production systems across healthcare and FinTech product lines."
+      "title": "Joined Bridging Technologies",
+      "detail": "Started as Full Stack Developer on Practina, an AI-powered social, ads, and reputation platform."
     },
     {
-      "id": "credee",
+      "id": "ai-pipeline",
       "date": "2022",
-      "title": "Credee FinTech Platform",
-      "detail": "Shipped payment flows, contracts, and money-adjacent architecture with Stripe at the core."
+      "title": "AI content pipeline in production",
+      "detail": "Shipped OpenAI-powered post generation, review responses, and campaign copy — lifting engagement 40%."
     },
     {
-      "id": "stripe",
-      "date": "2022–2023",
-      "title": "Stripe production systems",
-      "detail": "Webhook-driven state, dynamic fees, and idempotent recovery paths under real payment load."
+      "id": "star-player",
+      "date": "2023",
+      "title": "Star Player of the Department",
+      "detail": "Awarded for technical excellence, platform reliability improvements, and cross-functional collaboration."
     },
     {
-      "id": "practina",
+      "id": "scale",
       "date": "2023–2024",
-      "title": "Practina AI Platform",
-      "detail": "Built AI marketing workflows with OpenAI, queues, retries, and cost-aware generation pipelines."
+      "title": "AI automation and real-time systems at scale",
+      "detail": "Automated Meta/Google Ads and social publishing, shipped Socket.IO tracking, and cut MTTR 50% with Grafana and New Relic."
     },
     {
-      "id": "leadership",
-      "date": "2024",
-      "title": "Systems ownership & leadership",
-      "detail": "Owned Redis, BullMQ, AWS, and MySQL paths — from design decisions to production incident response."
+      "id": "promoted",
+      "date": "Oct 2025",
+      "title": "Promoted to Senior Full Stack Developer",
+      "detail": "Moved to Credee, a Stripe Connect-powered B2B payment financing platform."
+    },
+    {
+      "id": "credee-scale",
+      "date": "2025–2026",
+      "title": "Payment financing engine at scale",
+      "detail": "Shipped Stripe Connect OBO flows, Terminal S700, and async pipelines handling hundreds of thousands of jobs a day at 99.9% reliability."
+    },
+    {
+      "id": "star-performer",
+      "date": "2026",
+      "title": "Star Performer Award",
+      "detail": "Recognized by leadership for technical ownership and driving cross-functional engineering initiatives."
     },
     {
       "id": "senior",
       "date": "Present",
       "title": "Senior Full Stack Developer",
-      "detail": "Nearly five years shipping scalable backend systems, FinTech, and AI integrations end to end."
+      "detail": "4.5+ years shipping FinTech, AI, and production infrastructure — leading a team of 10 engineers end to end."
     },
     {
       "id": "next",

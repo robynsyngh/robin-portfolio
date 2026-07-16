@@ -2,16 +2,16 @@
   {
     "slug": "stripe",
     "title": "Stripe",
-    "subtitle": "Webhook-driven payments that survive retries",
-    "summary": "How Credee treats Stripe as an event source of truth for money movement, fees, and recovery.",
+    "subtitle": "Connect, OBO payouts, and Terminal S700 at merchant scale",
+    "summary": "How Credee treats Stripe Connect as an event source of truth for financing, payouts, and in-person payments across 1,000+ merchants.",
     "projectIds": ["credee"],
-    "problem": "User clicks are unreliable. Network timeouts, duplicate webhooks, and partial fee calculations can desync product state from what Stripe actually settled.",
-    "approach": "Accept payment intent quickly, then let verified Stripe events advance durable state through idempotent workers. Never trust a single browser response as the final ledger truth.",
+    "problem": "User clicks are unreliable. Network timeouts, duplicate webhooks, and partial fee calculations can desync product state from what Stripe actually settled — at merchant scale, that becomes a support and compliance problem.",
+    "approach": "Accept payment intent quickly, then let verified Stripe Connect events advance durable state through idempotent workers. Never trust a single browser response as the final ledger truth.",
     "architecture": [
       "API validates and creates local payment intent / pending records.",
-      "Stripe confirms settlement through signed webhooks.",
+      "Stripe Connect confirms OBO settlement and payouts through signed webhooks.",
       "BullMQ workers apply transitions idempotently using event IDs.",
-      "MySQL stores audit-friendly payment state for recovery and support."
+      "PostgreSQL and MySQL store audit-friendly payment state for recovery and support."
     ],
     "lessons": [
       "Design for duplicate delivery before you design for the happy path.",
@@ -19,8 +19,8 @@
       "Support tools need the event trail as much as the final status."
     ],
     "outcomes": [
-      "Clear pending vs settled states for clients and operators.",
-      "Safer retries when Stripe or workers hiccup under load."
+      "Automated transfer reconciliation across 1,000+ merchants, saving 20+ hours of manual work monthly.",
+      "Terminal S700 in-person payments integrated with the same idempotent webhook pipeline."
     ]
   },
   {
@@ -49,15 +49,15 @@
   {
     "slug": "bullmq",
     "title": "BullMQ",
-    "subtitle": "Durable work for payments and AI jobs",
-    "summary": "Turning brittle request/response paths into retryable worker pipelines for Credee and Practina.",
+    "subtitle": "Durable work for payments and AI jobs at 99.9% reliability",
+    "summary": "Turning brittle request/response paths into retryable worker pipelines processing hundreds of thousands of daily jobs for Credee and Practina.",
     "projectIds": ["credee", "practina"],
     "problem": "Payments, webhooks, OpenAI calls, and social publishing are too slow or too flaky to finish inside a single user request.",
     "approach": "Enqueue domain jobs with retries, backoff, and dead-letter visibility. Keep public APIs focused on accept/validate/respond.",
     "architecture": [
       "API enqueues typed jobs after validation.",
       "Workers own provider calls and state transitions.",
-      "Failed jobs surface with enough context to replay safely."
+      "Failed jobs surface with enough context to replay safely, backed by Kafka for ordered event delivery on the payments side."
     ],
     "lessons": [
       "Idempotency keys are part of the API contract.",
@@ -65,22 +65,22 @@
       "Queue depth is a product metric, not only an infra chart."
     ],
     "outcomes": [
-      "1000+ background jobs handled through production worker pipelines.",
+      "Hundreds of thousands of daily jobs handled at 99.9% event delivery reliability.",
       "Async product behavior that can recover after provider outages."
     ]
   },
   {
     "slug": "openai",
     "title": "OpenAI",
-    "subtitle": "AI features with production boundaries",
-    "summary": "Integrating LLMs into Practina and personal systems without letting model latency or cost own the request path.",
+    "subtitle": "Production AI systems, not demos",
+    "summary": "Prompt engineering and LLM integrations powering content generation, sentiment analysis, and decision support — shipped with queues, cost controls, and measurable product outcomes.",
     "projectIds": ["practina", "ai-interview-copilot", "ai-credit-scoring-assistant"],
-    "problem": "LLM calls are variable, expensive, and failure-prone. Shipping them as blocking request handlers creates fragile products.",
-    "approach": "Shape prompts from structured product context, isolate generation behind APIs/queues, and return outputs that operators and users can evaluate.",
+    "problem": "LLM calls are variable, expensive, and failure-prone. Shipping them as blocking request handlers creates fragile products — and most AI features never get past the demo stage.",
+    "approach": "Shape prompts from structured product context, isolate generation behind APIs/queues, and return outputs that operators and users can evaluate. Treat prompt engineering as an engineering discipline, not a one-off string.",
     "architecture": [
       "Structured input assembly before the model call.",
-      "Async execution for campaign-scale generation.",
-      "Response shaping for explanations, not only completions."
+      "Async execution via BullMQ for campaign-scale generation and Python-based workflow automation.",
+      "Response shaping for explanations and sentiment scores, not only completions."
     ],
     "lessons": [
       "Context packaging beats prompt theatrics.",
@@ -88,8 +88,31 @@
       "Explainability is a UI requirement for decision-support AI."
     ],
     "outcomes": [
-      "AI workflows that degrade and retry instead of hanging users.",
-      "Reusable patterns across marketing and decision-support products."
+      "AI content and review-response automation that lifted engagement 40% and saved 15+ hours weekly.",
+      "Send-time decisioning and sentiment analysis running as production workflows, not experiments."
+    ]
+  },
+  {
+    "slug": "postgresql",
+    "title": "PostgreSQL",
+    "subtitle": "Query performance under real payment load",
+    "summary": "Indexing and query tuning across PostgreSQL, MySQL, and Redis that cut Credee's API P99 latency by 60%.",
+    "projectIds": ["credee"],
+    "problem": "As financing volume grew, unindexed lookups and chatty query patterns started showing up as tail latency on payment-critical endpoints.",
+    "approach": "Profile real production query paths, add targeted indexes, push repeat reads to Redis, and treat PostgreSQL as the durable source of truth rather than a cache substitute.",
+    "architecture": [
+      "Query plans reviewed against production-scale data, not seed fixtures.",
+      "Hot lookups cached in Redis with explicit invalidation tied to writes.",
+      "Slow queries tracked and triaged as a standing engineering metric, not a one-time cleanup."
+    ],
+    "lessons": [
+      "Most latency wins come from removing N+1 patterns, not exotic tuning.",
+      "Database CPU is a leading indicator — watch it before it becomes an incident.",
+      "Indexing strategy should follow real query patterns, not table shape."
+    ],
+    "outcomes": [
+      "API P99 latency reduced by 60%.",
+      "Database CPU utilization reduced by 35%."
     ]
   },
   {

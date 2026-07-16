@@ -24,12 +24,23 @@ export function PageTransition({ children }: PageTransitionProps) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease }}
-    >
-      {children}
-    </motion.div>
+    <>
+      <motion.div
+        aria-hidden
+        data-print-hide
+        className="route-scanline"
+        initial={{ scaleY: 1, opacity: 1 }}
+        animate={{ scaleY: 0, opacity: 0 }}
+        style={{ transformOrigin: "top" }}
+        transition={{ duration: 0.5, ease }}
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease }}
+      >
+        {children}
+      </motion.div>
+    </>
   );
 }

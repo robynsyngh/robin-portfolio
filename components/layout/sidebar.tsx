@@ -7,7 +7,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { NavItem, Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Text } from "@/components/ui/text";
-import { TextLink } from "@/components/ui/text-link";
 import { useLenis } from "@/components/smooth-scroll/lenis-context";
 import { useActiveSectionContext } from "@/components/navigation/active-section-provider";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -214,7 +213,10 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 flex h-header items-center justify-between border-b border-border bg-background px-6 md:hidden">
+      <header
+        data-print-hide
+        className="fixed inset-x-0 top-0 z-40 flex h-header items-center justify-between border-b border-border bg-background px-6 md:hidden"
+      >
         <Link
           href="/"
           className="min-h-11 font-mono text-sm tracking-wide text-foreground inline-flex items-center"
@@ -224,6 +226,7 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
         <button
           ref={menuButtonRef}
           type="button"
+          data-cursor-text={open ? "close" : "menu"}
           aria-expanded={open}
           aria-controls="site-navigation"
           onClick={() => setOpen((value) => !value)}
@@ -251,6 +254,7 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
 
       <aside
         id="site-navigation"
+        data-print-hide
         aria-hidden={drawerInactive ? true : undefined}
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-sidebar flex-col border-r border-border bg-background",
@@ -313,7 +317,7 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
                           {active ? (
                             <motion.span
                               layoutId={mounted ? "nav-active-indicator" : undefined}
-                              className="absolute inset-0 bg-accent"
+                              className="absolute inset-0 bg-signal"
                               transition={{
                                 duration: reducedMotion ? 0 : 0.35,
                                 ease,
@@ -345,30 +349,56 @@ export function Sidebar({ profile, navigation }: SidebarProps) {
             />
           </div>
 
-          <div className="mt-auto space-y-4 border-t border-border pt-6">
-            <div className="flex flex-wrap gap-x-4 gap-y-2">
+          <div className="mt-auto border-t border-border pt-4">
+            <ul className="space-y-1">
               {profile.social.map((item) => (
-                <TextLink
-                  key={item.href}
-                  href={item.href}
-                  subtle
-                  target="_blank"
-                  rel="noreferrer"
-                  tabIndex={drawerInactive ? -1 : undefined}
-                  className="inline-flex min-h-11 items-center font-mono text-xs tracking-wide"
-                >
-                  {item.label}
-                </TextLink>
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    tabIndex={drawerInactive ? -1 : undefined}
+                    className="group relative flex min-h-11 items-center py-2 font-mono text-sm tracking-wide text-muted transition-colors duration-200 hover:text-foreground"
+                  >
+                    <span
+                      aria-hidden
+                      className="relative mr-3 flex h-px w-4 items-center"
+                    >
+                      <span className="absolute inset-0 bg-signal opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                    </span>
+                    {item.label}
+                  </a>
+                </li>
               ))}
-            </div>
-            <TextLink
-              href={profile.resumePath}
-              subtle
-              tabIndex={drawerInactive ? -1 : undefined}
-              className="inline-flex min-h-11 items-center font-mono text-xs tracking-wide"
-            >
-              Resume
-            </TextLink>
+              <li>
+                <Link
+                  href="/resume"
+                  aria-current={pathname === "/resume" ? "page" : undefined}
+                  tabIndex={drawerInactive ? -1 : undefined}
+                  className={cn(
+                    "group relative flex min-h-11 items-center py-2 font-mono text-sm tracking-wide transition-colors duration-200",
+                    pathname === "/resume"
+                      ? "text-foreground"
+                      : "text-muted hover:text-foreground",
+                  )}
+                >
+                  <span
+                    aria-hidden
+                    className="relative mr-3 flex h-px w-4 items-center"
+                  >
+                    <span
+                      className={cn(
+                        "absolute inset-0 bg-signal transition-opacity duration-200",
+                        pathname === "/resume"
+                          ? "opacity-100"
+                          : "opacity-0 group-hover:opacity-100",
+                      )}
+                    />
+                  </span>
+                  Resume
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </aside>

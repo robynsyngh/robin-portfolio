@@ -45,6 +45,8 @@
 - [SEO & feeds](#seo--feeds)
 - [Contact](#contact)
 
+For a deeper, fresher-friendly walkthrough of how the code is organized and how to make common changes, see [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) (or open [`docs/DEVELOPMENT.html`](./docs/DEVELOPMENT.html) directly in a browser for a formatted, navigable version).
+
 </details>
 
 ---
@@ -57,9 +59,9 @@ It showcases production systems thinking across FinTech, AI integrations, async 
 
 | Signal | Detail |
 | --- | --- |
-| Focus | Backend · FinTech · AI · Payments |
-| Experience | Nearly 5 years |
-| Current | Bridging Healthcare Technologies |
+| Focus | Backend · FinTech · AI Systems · Payments |
+| Experience | 4.5+ years |
+| Current | Bridging Technologies Pvt. Ltd. |
 | Site | [robinsingh.dev](https://robinsingh.dev) |
 
 ---
@@ -76,19 +78,22 @@ The live site includes a portfolio runtime. Open [robinsingh.dev/#terminal](http
 ```text
 robin@portfolio:~$ help
 
-  help          List available commands
-  about         Engineering summary
-  whoami        Identity check
-  projects      List featured projects
-  skills        Production skill surface
-  architecture  Jump the request path
-  blog          Open writing
-  contact       Get in touch
-  resume        Download resume
-  github        Open GitHub
-  linkedin      Open LinkedIn
-  clear         Clear the terminal
+  help            List available commands
+  ask <question>  Ask AI about my experience, projects & systems
+  about           Engineering summary
+  whoami          Identity check
+  projects        List featured projects
+  skills          Production skill surface
+  architecture    Jump the request path
+  blog            Open writing
+  contact         Get in touch
+  resume          Download resume
+  github          Open GitHub
+  linkedin        Open LinkedIn
+  clear           Clear the terminal
 ```
+
+`ask <question>` streams a real, Gemini-backed answer grounded only in the same `content/*.json` that powers the rest of the site (see [`lib/ai/context.ts`](./lib/ai/context.ts)) — it won't invent facts about Robin. It degrades gracefully to a helpful message if `GEMINI_API_KEY` isn't configured, and is rate-limited per IP (see [`lib/ai/rate-limit.ts`](./lib/ai/rate-limit.ts)).
 
 </details>
 
@@ -207,6 +212,7 @@ flowchart LR
 Next.js 15 (App Router) · TypeScript · Tailwind CSS 4
 Lenis · GSAP + ScrollTrigger · Framer Motion
 MDX (next-mdx-remote + @next/mdx)
+Gemini API (terminal AI mode)
 Vercel Analytics · Speed Insights
 ```
 
@@ -216,15 +222,42 @@ Vercel Analytics · Speed Insights
 <br />
 
 ```text
-app/                 # routes, SEO, OG image, sitemap, feed
-components/          # UI sections + providers
-content/             # all site content (JSON + MDX + resume)
-hooks/               # React / GSAP helpers
-lib/                 # content loaders, MDX, types, SEO
-public/              # static assets (synced resume)
-scripts/             # resume sync
-docs/assets/         # README visuals
-PORTFOLIO_SPEC.md    # product / design source of truth
+app/                     # routes (App Router)
+├── api/ask/route.ts      # streaming AI endpoint for terminal `ask`
+├── blog/                 # blog index + [slug]
+├── case-studies/[slug]/  # case study detail pages
+├── resume/               # resume view/download route
+├── feed.xml/              # RSS route
+├── sitemap.ts · robots.ts # SEO routes
+├── opengraph-image.tsx · icon.tsx · apple-icon.tsx
+└── layout.tsx · page.tsx · template.tsx · globals.css
+
+components/              # one folder per site section + shared UI
+├── hero/ journey/ skills/ architecture/ projects/
+├── case-studies/ blog/ achievements/ contact/
+├── terminal/ easter-eggs/ cursor/ background/
+├── layout/ navigation/ scroll/ seo/ loader/ smooth-scroll/
+├── resume/ providers.tsx
+└── ui/                    # button, badge, container, typewriter, tilt-card...
+
+content/                 # all site content — never hardcode data in components
+├── *.json                # profile, hero, journey, experience, projects,
+│                          # case-studies, skills, architecture, terminal,
+│                          # easter-eggs, achievements, contact, navigation,
+│                          # background, loader, scroll-progress, blog
+├── blog/*.mdx             # long-form writing
+└── resume.pdf
+
+hooks/                   # use-gsap, use-active-section, use-typing-sequence, ...
+lib/
+├── ai/                   # context.ts (knowledge base + system prompt), rate-limit.ts
+├── terminal/             # run-command.ts (terminal command handlers)
+└── content, mdx, types, seo loaders
+
+public/                  # static assets (synced resume, etc.)
+scripts/                 # resume sync
+docs/assets/             # README visuals
+PORTFOLIO_SPEC.md        # product / design source of truth
 ```
 
 </details>
@@ -249,9 +282,16 @@ content/
 ├── easter-eggs.json
 ├── achievements.json
 ├── contact.json
+├── navigation.json
+├── background.json
+├── loader.json
+├── scroll-progress.json
+├── blog.json
 ├── blog/*.mdx
 └── resume.pdf
 ```
+
+`ask <question>` is powered by [`app/api/ask/route.ts`](./app/api/ask/route.ts), which streams a Gemini-backed response grounded in a knowledge base built from `profile`, `experience`, `projects`, `skills`, `case-studies`, and `achievements` (see [`lib/ai/context.ts`](./lib/ai/context.ts)), and rate-limits requests per IP (see [`lib/ai/rate-limit.ts`](./lib/ai/rate-limit.ts)).
 
 <details>
 <summary><strong>Resume sync</strong></summary>
@@ -271,6 +311,10 @@ content/
 ```bash
 # install
 npm install
+
+# configure AI terminal mode (optional — falls back gracefully without it)
+cp .env.example .env.local
+# then set GEMINI_API_KEY in .env.local
 
 # develop (Turbopack)
 npm run dev

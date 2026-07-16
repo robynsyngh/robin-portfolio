@@ -40,7 +40,7 @@ export function BlogIndex({ content, posts, activeCategory }: BlogIndexProps) {
                 !activeCategory ? "text-foreground" : "text-muted hover:text-foreground",
               )}
             >
-              <Badge className={!activeCategory ? "border-accent/40 text-foreground" : undefined}>
+              <Badge className={!activeCategory ? "border-signal/40 text-foreground" : undefined}>
                 All
               </Badge>
             </TextLink>
@@ -55,7 +55,7 @@ export function BlogIndex({ content, posts, activeCategory }: BlogIndexProps) {
                 >
                   <Badge
                     className={
-                      active ? "border-accent/40 text-foreground" : "hover:text-foreground"
+                      active ? "border-signal/40 text-foreground" : "hover:text-foreground"
                     }
                   >
                     {category}

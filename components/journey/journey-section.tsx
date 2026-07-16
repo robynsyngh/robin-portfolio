@@ -40,6 +40,8 @@ export function JourneySection({ journey }: JourneySectionProps) {
                 ease: [0.22, 1, 0.36, 1],
               }}
               className="pl-8 md:pl-12"
+              data-cursor-hover
+              data-cursor-text={milestone.date}
             >
               <div className="flex flex-col gap-3 md:flex-row md:gap-10">
                 <Text

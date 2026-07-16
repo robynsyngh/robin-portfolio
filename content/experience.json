@@ -1,17 +1,37 @@
 [
   {
-    "id": "bht",
-    "company": "Bridging Healthcare Technologies",
+    "id": "credee",
+    "company": "Bridging Technologies Pvt. Ltd.",
     "role": "Senior Full Stack Developer",
-    "start": "2021-10",
+    "start": "2025-10",
     "end": "Present",
-    "summary": "Building production FinTech and AI platforms with a focus on reliability, async architecture, and developer experience.",
+    "summary": "Engineering Credee, a Stripe Connect-powered B2B payment financing platform — owning the financing engine, payment infrastructure, and production reliability.",
     "highlights": [
-      "Joined in October 2021",
-      "Shipped Credee FinTech platform with Stripe payments",
-      "Built Practina AI marketing platform with OpenAI integrations",
-      "Led systems work across Redis, BullMQ, AWS, and MySQL",
-      "Owned payment webhooks, queue workers, and production reliability paths"
+      "Built a Node.js/TypeScript financing engine with installment schedules, interest tiers, and credit-score-based eligibility checks",
+      "Implemented Stripe Connect OBO flows, payout orchestration, and automated transfer reconciliation across 1,000+ merchants",
+      "Integrated Stripe Terminal S700 with payment intents, reader management, and real-time transaction updates",
+      "Architected Node.js, Redis, and BullMQ pipelines processing hundreds of thousands of daily jobs at 99.9% event delivery reliability",
+      "Reduced API P99 latency by 60% and database CPU utilization by 35% through PostgreSQL/MySQL/Redis performance tuning",
+      "Automated Stripe ledger reconciliation, saving 20+ hours of manual work monthly",
+      "Led sprint planning and architecture reviews across a team of 10 engineers; mentored 2 junior developers"
+    ]
+  },
+  {
+    "id": "practina",
+    "company": "Bridging Technologies Pvt. Ltd.",
+    "role": "Full Stack Developer",
+    "start": "2021-10",
+    "end": "2025-10",
+    "summary": "Built Practina, an AI-powered social media, advertising, and reputation management platform — from AI content pipelines to production infrastructure.",
+    "highlights": [
+      "Integrated OpenAI and Python automation for social posts, review responses, and campaign copy, lifting engagement 40% and saving 15+ hours weekly",
+      "Built REST and event-driven APIs for multi-platform publishing, Meta Ads, and Google Ads automation",
+      "Designed an FFmpeg + AWS S3 media pipeline, cutting processing time 50% and storage usage 30%",
+      "Deployed OpenAI workflows for email personalization, send-time decisioning, and review sentiment analysis",
+      "Built Socket.IO real-time tracking and notifications, reducing support escalations",
+      "Delivered Angular, React.js, and TypeScript dashboards for campaign analytics and lead management",
+      "Managed AWS, Docker, and Jenkins CI/CD, cutting release time 65% with zero-downtime deployments",
+      "Deployed Grafana and New Relic monitoring, reducing production MTTR by 50%"
     ]
   }
 ]

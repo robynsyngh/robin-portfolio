@@ -53,9 +53,9 @@
     },
     {
       "id": "mysql",
-      "label": "MySQL",
+      "label": "Postgres/MySQL",
       "purpose": "Persist the source of truth for money, contracts, and product state.",
-      "usage": "Transactional records for payments, entities, and audit-friendly writes.",
+      "usage": "Transactional records for payments, entities, and audit-friendly writes — indexing and query tuning cut API P99 latency 60%.",
       "challenges": "Indexing, contention, and migrations under live production load.",
       "story": "Every critical mutation is written for recovery, not just for the happy path."
     },

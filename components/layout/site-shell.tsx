@@ -19,7 +19,7 @@ export function SiteShell({ children }: SiteShellProps) {
         <SkipLink />
         <InteractiveBackground background={background} />
         <Sidebar profile={profile} navigation={navigation} />
-        <div className="relative z-10 min-h-screen pt-header md:pl-sidebar md:pt-0">
+        <div className="relative z-10 min-h-screen pt-header md:pl-sidebar md:pt-0 print:pl-0 print:pt-0">
           <main id="main-content" className="min-h-screen outline-none" tabIndex={-1}>
             {children}
           </main>

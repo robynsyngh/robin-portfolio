@@ -34,7 +34,10 @@ export function ContactSection({ contact, profile }: ContactSectionProps) {
           </Text>
 
           <div className="mt-8 inline-flex items-center gap-3 border border-border px-3 py-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+            <span className="relative flex h-1.5 w-1.5" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60 motion-reduce:hidden" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-signal" />
+            </span>
             <Text as="p" variant="mono" className="text-foreground">
               {contact.availability}
             </Text>
@@ -44,7 +47,7 @@ export function ContactSection({ contact, profile }: ContactSectionProps) {
             <Button href={`mailto:${profile.email}`} variant="primary">
               {contact.ctaLabel}
             </Button>
-            <Button href={profile.resumePath} variant="secondary">
+            <Button href="/resume" variant="secondary">
               Resume
             </Button>
           </div>

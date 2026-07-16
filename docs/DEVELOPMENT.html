@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Developer Guide — robin-portfolio</title>
+<meta name="description" content="Code-first developer reference for the robin-portfolio repository: architecture, folder structure, content pipeline, terminal, AI endpoint, blog pipeline, and common workflows." />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-raised: #121212;
+    --bg-card: #141414;
+    --border: #262626;
+    --border-soft: #1c1c1c;
+    --fg: #ededed;
+    --fg-muted: #a3a3a3;
+    --fg-dim: #6b6b6b;
+    --accent: #ededed;
+    --code-bg: #101010;
+    --radius: 10px;
+    --mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sidebar-w: 280px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+  }
+
+  a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--border); transition: border-color .15s ease, color .15s ease; }
+  a:hover { color: #fff; border-color: var(--fg-muted); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--code-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 5px;
+    padding: 0.12em 0.42em;
+    color: #e7e7e7;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    line-height: 1.65;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #dedede;
+  }
+
+  /* ---------- Layout shell ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid var(--border-soft);
+    padding: 28px 22px 40px;
+    background: linear-gradient(180deg, var(--bg-raised), var(--bg));
+  }
+
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .brand-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #7CFC9C;
+    box-shadow: 0 0 8px rgba(124,252,156,0.6);
+    flex-shrink: 0;
+  }
+  .brand-title {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+  }
+  .brand-sub {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+    margin: 2px 0 20px;
+  }
+
+  .nav-group-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-dim);
+    margin: 22px 0 8px;
+  }
+
+  .toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .toc a {
+    display: block;
+    border-bottom: none;
+    color: var(--fg-muted);
+    font-size: 0.87rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+  }
+  .toc a:hover { color: var(--fg); background: var(--bg-card); }
+  .toc a.active {
+    color: var(--fg);
+    background: var(--bg-card);
+    border-left: 2px solid #7CFC9C;
+  }
+
+  .sidebar-footer {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-soft);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+  }
+
+  main {
+    padding: 56px clamp(20px, 5vw, 72px) 120px;
+    max-width: 880px;
+  }
+
+  .doc-header { margin-bottom: 44px; }
+  .doc-kicker {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+  }
+  .lede {
+    color: var(--fg-muted);
+    font-size: 1.05rem;
+    max-width: 68ch;
+    margin: 0 0 18px;
+  }
+
+  .callout {
+    border: 1px solid var(--border);
+    border-left: 3px solid #7CFC9C;
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.92rem;
+    color: var(--fg-muted);
+  }
+  .callout code { background: rgba(255,255,255,0.04); }
+  .callout strong { color: var(--fg); }
+
+  section.block {
+    padding-top: 52px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border-soft);
+    scroll-margin-top: 24px;
+  }
+  section.block:first-of-type { border-top: none; }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .idx {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+  h3 {
+    font-size: 1.08rem;
+    margin: 28px 0 10px;
+    color: var(--fg);
+    font-family: var(--mono);
+  }
+  h3 code { font-size: 0.95em; }
+
+  p { color: var(--fg-muted); margin: 0 0 14px; }
+  p strong, li strong { color: var(--fg); }
+
+  ul, ol { color: var(--fg-muted); padding-left: 1.3em; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+  ol > li::marker { color: var(--fg-dim); font-family: var(--mono); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4px 0 22px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  th {
+    background: var(--bg-card);
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--fg-dim);
+  }
+  td { color: var(--fg-muted); }
+  td code { white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.015); }
+
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin: 18px 0 22px;
+  }
+  .flow-step {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--fg);
+  }
+  .flow-arrow { color: var(--fg-dim); font-size: 1rem; }
+
+  .workflow-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: var(--bg-card);
+  }
+  .workflow-item .q {
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 4px;
+    font-size: 0.94rem;
+  }
+  .workflow-item .a {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    display: flex;
+    gap: 8px;
+    margin: 0;
+  }
+  .workflow-item .a::before { content: "→"; color: #7CFC9C; flex-shrink: 0; }
+
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 42px;
+    margin-bottom: 14px;
+  }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-nav {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--fg-dim);
+  }
+  .footer-nav a { border-bottom: none; }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 18px; }
+  .pill {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar {
+      position: relative;
+      height: auto;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    main { padding: 40px 20px 90px; max-width: 100%; }
+  }
+
+  ::selection { background: rgba(124,252,156,0.25); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-title">robin-portfolio</span>
+    </div>
+    <div class="brand-sub">// developer guide v1.0</div>
+
+    <div class="nav-group-label">Overview</div>
+    <ul class="toc">
+      <li><a href="#mental-model">Mental model</a></li>
+      <li><a href="#request-lifecycle">Request lifecycle</a></li>
+      <li><a href="#folders">Folder-by-folder reference</a></li>
+    </ul>
+
+    <div class="nav-group-label">Deep dives</div>
+    <ul class="toc">
+      <li><a href="#content-layer">The content layer</a></li>
+      <li><a href="#terminal">The terminal</a></li>
+      <li><a href="#ai-endpoint">The AI <code>ask</code> endpoint</a></li>
+      <li><a href="#blog-pipeline">The blog (MDX) pipeline</a></li>
+      <li><a href="#styling">Styling conventions</a></li>
+    </ul>
+
+    <div class="nav-group-label">Doing things</div>
+    <ul class="toc">
+      <li><a href="#workflows">Common workflows</a></li>
+      <li><a href="#new-section">Adding a new section</a></li>
+      <li><a href="#gotchas">Gotchas &amp; conventions</a></li>
+      <li><a href="#local-setup">Local setup</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      See also<br />
+      <a href="../README.md">README.md</a> · <a href="../PORTFOLIO_SPEC.md">PORTFOLIO_SPEC.md</a>
+    </div>
+  </aside>
+
+  <main>
+    <header class="doc-header">
+      <p class="doc-kicker">Developer Guide</p>
+      <h1>Understanding this codebase</h1>
+      <p class="lede">
+        A practical, code-first reference for working in this repo — written for someone opening the
+        project for the first time. If you're already comfortable with the Next.js App Router,
+        skim the sidebar and jump straight to what you need.
+      </p>
+      <div class="badge-row">
+        <span class="pill">Next.js 15 · App Router</span>
+        <span class="pill">TypeScript</span>
+        <span class="pill">Content-driven UI</span>
+        <span class="pill">Fresher-friendly</span>
+      </div>
+      <div class="callout">
+        For <strong>product / design intent</strong> (voice, visual rules, what each section should
+        say) see <code>PORTFOLIO_SPEC.md</code>. This doc is about
+        <strong>how the code is organized and how to work in it.</strong>
+      </div>
+    </header>
+
+    <section class="block" id="mental-model">
+      <h2><span class="idx">01</span> Mental model</h2>
+      <p>
+        This is a <strong>Next.js 15 App Router</strong> site with one hard rule:
+        <strong>components never hardcode content</strong>. Every string, list, and number a
+        component renders is passed in as a prop that ultimately traces back to a JSON file in
+        <code>content/</code>.
+      </p>
+      <div class="flow">
+        <span class="flow-step">content/*.json</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">lib/content.ts <small style="color:var(--fg-dim)">(typed getters)</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">app/**/page.tsx</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">components/**/*.tsx <small style="color:var(--fg-dim)">(dumb, presentational)</small></span>
+      </div>
+      <p>
+        If you're fixing a typo or changing copy, you almost never touch a component — you edit a
+        JSON file. If you're adding a new visual section, you touch content, a type, a content
+        getter, a component, and a page — in that order.
+      </p>
+    </section>
+
+    <section class="block" id="request-lifecycle">
+      <h2><span class="idx">02</span> Request lifecycle</h2>
+      <p>Using the homepage (<code>/</code>) as the example — this is what actually runs, in order:</p>
+      <ol class="steps">
+        <li><strong><code>app/layout.tsx</code></strong> (server component) runs first for every route. It calls <code>getProfile()</code>, <code>getLoader()</code>, <code>getEasterEggs()</code> from <code>lib/content.ts</code>, builds <code>&lt;head&gt;</code> metadata + JSON-LD, and wraps everything in <code>&lt;Providers&gt;</code> and <code>&lt;SiteShell&gt;</code>.</li>
+        <li><strong><code>components/providers.tsx</code></strong> (client component) sets up cross-cutting client-side concerns that must wrap the whole app: smooth scrolling (<code>SmoothScroll</code>/Lenis), the easter-egg context, the boot-up loader screen, and a few <code>dynamic()</code>-imported, <code>ssr: false</code> extras (custom cursor, dev-mode HUD, unlock toasts, rubber duck).</li>
+        <li><strong><code>components/layout/site-shell.tsx</code></strong> renders the persistent chrome — sidebar/nav, page transitions, scroll/request tracker — around the routed page content.</li>
+        <li><strong><code>app/page.tsx</code></strong> (server component) is the actual homepage. It calls the <code>get*()</code> content functions it needs and renders one section component per feature, in page order, passing typed content down as props. Two heavy sections (<code>ArchitectureSection</code>, <code>PortfolioTerminal</code>) are loaded via <code>next/dynamic</code> to keep the initial JS bundle smaller.</li>
+        <li>Each <strong>section component</strong> (e.g. <code>components/hero/hero.tsx</code>) is presentational: it receives content as props and owns its own animation/layout logic (GSAP timelines, Framer Motion variants), but does not import from <code>content/</code> directly.</li>
+      </ol>
+      <p>Other routes (<code>/blog</code>, <code>/blog/[slug]</code>, <code>/case-studies/[slug]</code>, <code>/resume</code>) follow the same shape: a server component page that fetches content/MDX, then renders presentational components.</p>
+    </section>
+
+    <section class="block" id="folders">
+      <h2><span class="idx">03</span> Folder-by-folder reference</h2>
+
+      <h3><code>app/</code> — routes only</h3>
+      <p>Next.js App Router convention: each folder is a URL segment, <code>page.tsx</code> is the page, <code>route.ts</code> is an API handler.</p>
+      <table>
+        <thead><tr><th>Path</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td><code>app/page.tsx</code></td><td>Homepage — composes every section</td></tr>
+          <tr><td><code>app/layout.tsx</code></td><td>Root HTML shell, fonts, global metadata, JSON-LD, analytics</td></tr>
+          <tr><td><code>app/template.tsx</code></td><td>Per-navigation wrapper (page transition remount point)</td></tr>
+          <tr><td><code>app/blog/page.tsx</code></td><td>Blog index</td></tr>
+          <tr><td><code>app/blog/[slug]/page.tsx</code></td><td>Single MDX post</td></tr>
+          <tr><td><code>app/case-studies/[slug]/page.tsx</code></td><td>Single case study detail page</td></tr>
+          <tr><td><code>app/resume/page.tsx</code></td><td>Resume viewer/download page</td></tr>
+          <tr><td><code>app/api/ask/route.ts</code></td><td><code>POST</code> handler that streams Gemini responses for the terminal's <code>ask</code> command</td></tr>
+          <tr><td><code>app/sitemap.ts</code>, <code>app/robots.ts</code>, <code>app/feed.xml/route.ts</code></td><td>Generated SEO/feed routes</td></tr>
+          <tr><td><code>app/opengraph-image.tsx</code>, <code>app/icon.tsx</code>, <code>app/apple-icon.tsx</code></td><td>Generated image routes (favicons, OG image)</td></tr>
+          <tr><td><code>app/globals.css</code></td><td>Tailwind entry + CSS variables/tokens</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>Rule of thumb:</strong> if you're adding a new URL, you're working in <code>app/</code>. If you're adding a new visual block on an existing page, you're working in <code>components/</code>.</div>
+
+      <h3><code>components/</code> — one folder per feature, plus <code>ui/</code></h3>
+      <p>Each homepage section has its own folder named after the section (<code>hero/</code>, <code>journey/</code>, <code>skills/</code>, <code>projects/</code>, <code>architecture/</code>, <code>case-studies/</code>, <code>achievements/</code>, <code>contact/</code>, <code>terminal/</code>, <code>blog/</code>). Cross-cutting concerns get their own folders too:</p>
+      <table>
+        <thead><tr><th>Folder</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td><code>layout/</code></td><td><code>site-shell.tsx</code>, <code>sidebar.tsx</code>, <code>page-transition.tsx</code> — persistent chrome</td></tr>
+          <tr><td><code>navigation/</code></td><td>Nav-specific pieces used by the shell</td></tr>
+          <tr><td><code>scroll/</code></td><td><code>request-tracker.tsx</code> — the scroll-progress "system" visualization</td></tr>
+          <tr><td><code>smooth-scroll/</code>, <code>smooth-scroll.tsx</code></td><td>Lenis wrapper</td></tr>
+          <tr><td><code>background/</code></td><td><code>interactive-background.tsx</code> — the animated node/graph backdrop</td></tr>
+          <tr><td><code>cursor/</code></td><td><code>custom-cursor.tsx</code></td></tr>
+          <tr><td><code>easter-eggs/</code></td><td>Context provider + dev-mode HUD + unlock toast + rubber duck, all driven by <code>content/easter-eggs.json</code></td></tr>
+          <tr><td><code>loader/</code></td><td>Boot-up loading screen</td></tr>
+          <tr><td><code>seo/</code></td><td><code>json-ld.tsx</code> helper for structured data</td></tr>
+          <tr><td><code>resume/</code></td><td><code>resume-actions.tsx</code> — download/print buttons on <code>/resume</code></td></tr>
+          <tr><td><code>ui/</code></td><td>Shared, generic primitives with <strong>no business logic</strong>: <code>button</code>, <code>badge</code>, <code>container</code>, <code>section</code>, <code>stack</code>, <code>text</code>, <code>text-link</code>, <code>divider</code>, <code>typewriter</code>, <code>tilt-card</code>, <code>animated-number</code>. Re-exported from <code>ui/index.ts</code>.</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Convention:</strong> a feature component receives its content as a typed prop (e.g. <code>&lt;Hero profile={profile} hero={hero} /&gt;</code>) and never imports <code>content/*.json</code> or <code>lib/content.ts</code> itself — only pages do that.</p>
+
+      <h3><code>content/</code> — the data</h3>
+      <p>See <a href="#content-layer">The content layer</a> below. One JSON file per concern, plus <code>content/blog/*.mdx</code> for long-form posts and <code>content/resume.pdf</code> as the source PDF.</p>
+
+      <h3><code>lib/</code> — non-visual logic</h3>
+      <table>
+        <thead><tr><th>File / folder</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>lib/content.ts</code></td><td>Imports every <code>content/*.json</code>, casts to types from <code>lib/types.ts</code>, exports one <code>get*()</code> function per content type. <strong>The only file that should import raw JSON.</strong></td></tr>
+          <tr><td><code>lib/types.ts</code></td><td>Every content shape as a TypeScript <code>type</code>. Add a type here whenever you add a new JSON file.</td></tr>
+          <tr><td><code>lib/mdx.ts</code></td><td>Reads/parses blog <code>.mdx</code> files (frontmatter via <code>gray-matter</code>, reading time via <code>reading-time</code>)</td></tr>
+          <tr><td><code>lib/mdx-render.tsx</code>, <code>lib/mdx-components.tsx</code></td><td>MDX rendering setup and custom component overrides</td></tr>
+          <tr><td><code>lib/seo.ts</code></td><td>JSON-LD builders (<code>personJsonLd</code>, <code>websiteJsonLd</code>, <code>breadcrumbJsonLd</code>)</td></tr>
+          <tr><td><code>lib/session-nav.ts</code></td><td>Small helper for tracking navigation/session state</td></tr>
+          <tr><td><code>lib/utils.ts</code></td><td>Generic helpers (e.g. <code>cn()</code> class merger via <code>clsx</code> + <code>tailwind-merge</code>)</td></tr>
+          <tr><td><code>lib/ai/context.ts</code></td><td>Builds the terminal AI's knowledge base string + system prompt from <code>content/*</code></td></tr>
+          <tr><td><code>lib/ai/rate-limit.ts</code></td><td>In-memory per-IP rate limiter used by <code>app/api/ask/route.ts</code></td></tr>
+          <tr><td><code>lib/terminal/run-command.ts</code></td><td>Pure function: <code>(input, context) =&gt; TerminalCommandResult</code>. All non-AI terminal command logic lives here.</td></tr>
+        </tbody>
+      </table>
+
+      <h3><code>hooks/</code> — reusable React/GSAP hooks</h3>
+      <p><code>use-gsap.ts</code> (GSAP + <code>useGSAP</code> setup), <code>use-active-section.ts</code> (scroll-spy for nav), <code>use-media-query.ts</code>, <code>use-prefers-reduced-motion.ts</code>, <code>use-typing-sequence.ts</code> (typewriter timing).</p>
+
+      <h3><code>public/</code>, <code>scripts/</code>, <code>docs/assets/</code></h3>
+      <p><code>public/</code> holds static assets served as-is (including the synced resume PDF). <code>scripts/generate-resume.mjs</code> copies <code>content/resume.pdf</code> → <code>public/</code> (run via <code>npm run resume</code>). <code>docs/assets/</code> holds README/doc images only.</p>
+    </section>
+
+    <section class="block" id="content-layer">
+      <h2><span class="idx">04</span> The content layer</h2>
+      <p><em style="color:var(--fg-dim)">The most important pattern in this repo.</em> Adding or changing content always follows the same three-file pattern:</p>
+      <ol class="steps">
+        <li><strong>Edit or add JSON</strong> in <code>content/</code> (e.g. <code>content/skills.json</code>).</li>
+        <li><strong>Type it</strong> in <code>lib/types.ts</code> if the shape is new (e.g. <code>export type SkillsContent = { ... }</code>).</li>
+        <li><strong>Expose a getter</strong> in <code>lib/content.ts</code>:
+<pre><code>import skillsData from "@/content/skills.json";
+import type { SkillsContent } from "@/lib/types";
+
+const skills = skillsData as SkillsContent;
+
+export function getSkills(): SkillsContent {
+  return skills;
+}</code></pre>
+        </li>
+        <li>A page (<code>app/page.tsx</code>, etc.) calls <code>getSkills()</code> and passes the result to <code>&lt;SkillsSection skills={skills} /&gt;</code> as a prop.</li>
+      </ol>
+      <p>
+        Why this indirection instead of importing JSON directly in components? It keeps every
+        component pure/presentational and testable, keeps all content typed in one place, and means
+        a fresher can update the entire site's copy without reading component code — just edit
+        <code>content/*.json</code>.
+      </p>
+      <div class="callout">
+        <strong>Editing existing content:</strong> just change the JSON value; no code changes needed
+        as long as the shape (keys) stays the same.<br /><br />
+        <strong>Changing the shape</strong> (new field, renamed field): update <code>lib/types.ts</code>
+        and every place that reads the changed field.
+      </div>
+    </section>
+
+    <section class="block" id="terminal">
+      <h2><span class="idx">05</span> The terminal <small style="color:var(--fg-dim); font-family:var(--mono); font-size:0.6em;">deep dive</small></h2>
+      <p>The interactive terminal (<code>components/terminal/portfolio-terminal.tsx</code>) is a fun but genuinely useful part of the codebase to understand because it touches content, pure logic, and an API route.</p>
+      <ul>
+        <li><strong>Static commands</strong> (<code>help</code>, <code>about</code>, <code>whoami</code>, <code>projects</code>, <code>skills</code>, <code>architecture</code>, <code>blog</code>, <code>contact</code>, <code>resume</code>, <code>github</code>, <code>linkedin</code>, plus easter eggs like <code>sudo hire robin</code>, <code>npm install robin</code>, <code>git log</code>, <code>redis-cli</code>, <code>stripe test</code>, <code>coffee</code>) are handled entirely client-side by <code>runTerminalCommand()</code> in <code>lib/terminal/run-command.ts</code>. It's a pure function — <code>(rawInput, context) =&gt; TerminalCommandResult</code> — with no side effects, so it's easy to test or extend: add an <code>if (normalized === "your-command")</code> branch and return <code>{ lines: [...] }</code>.</li>
+        <li><strong><code>TerminalCommandResult</code></strong> (see <code>lib/types.ts</code>) can also signal <code>clear</code>, <code>open</code> (navigate), <code>download</code> (trigger a file download), <code>effect</code> (play a themed animation), or <code>enableDeveloperMode</code>.</li>
+        <li><strong><code>ask &lt;question&gt;</code></strong> is the one command that isn't pure/local — the terminal component <code>fetch</code>es <code>POST /api/ask</code> and streams the response into the terminal output as it arrives.</li>
+      </ul>
+      <h3 style="margin-top:24px;">To add a new terminal command</h3>
+      <ol>
+        <li>Add its metadata to <code>content/terminal.json</code> (<code>commands</code> array) so it shows up in <code>help</code>.</li>
+        <li>Add a branch in <code>runTerminalCommand()</code> returning the lines/behavior you want.</li>
+        <li>If it needs data not already in <code>TerminalContext</code>, add it to the <code>TerminalContext</code> type and to the <code>context={{ ... }}</code> prop passed from <code>app/page.tsx</code>.</li>
+      </ol>
+    </section>
+
+    <section class="block" id="ai-endpoint">
+      <h2><span class="idx">06</span> The AI <code>ask</code> endpoint <small style="color:var(--fg-dim); font-family:var(--mono); font-size:0.6em;">deep dive</small></h2>
+      <p><code>app/api/ask/route.ts</code> is a Next.js <strong>Route Handler</strong> (<code>runtime = "nodejs"</code>) that:</p>
+      <ol>
+        <li>Reads <code>GEMINI_API_KEY</code> from env — if missing, returns a friendly plain-text fallback instead of erroring (AI mode is optional, the site works fine without it).</li>
+        <li>Validates and truncates the incoming <code>question</code> (and short <code>history</code> for follow-ups), rejecting empty input.</li>
+        <li>Rate-limits by client IP via <code>lib/ai/rate-limit.ts</code> (simple in-memory sliding window — fine for a single-instance deployment, not distributed-safe).</li>
+        <li>Builds a system prompt via <code>buildSystemPrompt()</code> in <code>lib/ai/context.ts</code>, which serializes <code>profile</code>, <code>experience</code>, <code>projects</code>, <code>skills</code>, <code>case-studies</code>, and <code>achievements</code> from <code>lib/content.ts</code> into a compact "knowledge base" string, so the model can only answer from real site content.</li>
+        <li>Calls Gemini's <code>streamGenerateContent</code> SSE endpoint directly via <code>fetch</code> (no SDK dependency), with one quiet retry on <code>503</code>/<code>429</code>.</li>
+        <li>Re-streams the model's text deltas back to the client as a raw <code>text/plain</code> stream (parsing Gemini's <code>data: {...}</code> SSE lines itself).</li>
+      </ol>
+      <p>If you want the AI to know about a new fact, add it to the relevant <code>content/*.json</code> file — <code>buildPortfolioKnowledgeBase()</code> will pick it up automatically as long as it reads from a getter already listed in <code>context.ts</code>. If you add a brand-new content type you want the AI to know about, import its getter in <code>lib/ai/context.ts</code> and add a new <code>sections.push(...)</code> block.</p>
+    </section>
+
+    <section class="block" id="blog-pipeline">
+      <h2><span class="idx">07</span> The blog (MDX) pipeline</h2>
+      <ol>
+        <li>Write a post as <code>content/blog/your-slug.mdx</code> with frontmatter matching <code>BlogFrontmatter</code> in <code>lib/types.ts</code> (<code>title</code>, <code>description</code>, <code>date</code>, <code>category</code>, <code>published</code>).</li>
+        <li><code>lib/mdx.ts</code> reads all files in <code>content/blog/</code>, parses frontmatter with <code>gray-matter</code>, computes <code>readingTime</code>, and returns typed <code>BlogPost</code> objects (only <code>published: true</code> posts should surface on the public index).</li>
+        <li><code>app/blog/page.tsx</code> lists posts (via <code>content/blog.json</code> for index copy + <code>lib/mdx.ts</code> for the post list); <code>app/blog/[slug]/page.tsx</code> renders one post's MDX body via <code>lib/mdx-render.tsx</code>, using overrides from <code>lib/mdx-components.tsx</code>.</li>
+        <li>Posts are also picked up by <code>app/feed.xml/route.ts</code> (RSS) and <code>app/sitemap.ts</code>.</li>
+      </ol>
+      <div class="callout">To add a post: create the <code>.mdx</code> file, set <code>published: true</code> when ready — done, no other code changes needed.</div>
+    </section>
+
+    <section class="block" id="styling">
+      <h2><span class="idx">08</span> Styling conventions</h2>
+      <ul>
+        <li><strong>Tailwind CSS v4</strong>, configured via <code>app/globals.css</code> (CSS-first config with <code>@theme</code>/CSS variables, no separate <code>tailwind.config</code>-driven theme). Design tokens (spacing like <code>--space-section</code>, colors) live there.</li>
+        <li><strong>Monochrome by design constraint</strong> — no purple/glassmorphism/gradient wallpaper (see <code>PORTFOLIO_SPEC.md</code>). Question any new color before adding one.</li>
+        <li><strong>Motion split by tool:</strong> GSAP + ScrollTrigger (<code>hooks/use-gsap.ts</code>) for scroll-driven timelines; Framer Motion for discrete component-level animation (mount/hover/tap). Don't mix both for the same animation.</li>
+        <li><code>components/ui/</code> primitives (<code>Button</code>, <code>Badge</code>, <code>Container</code>, <code>Section</code>, <code>Stack</code>, <code>Text</code>, <code>TextLink</code>) should be your first stop before writing raw <code>&lt;div className="..."&gt;</code>.</li>
+        <li>Use the <code>cn()</code> helper from <code>lib/utils.ts</code> for conditional/merged class names instead of manual string concatenation.</li>
+      </ul>
+    </section>
+
+    <section class="block" id="workflows">
+      <h2><span class="idx">09</span> Common workflows</h2>
+
+      <div class="workflow-item">
+        <p class="q">Change existing copy/data on the site</p>
+        <p class="a">Edit the relevant file in <code>content/*.json</code>. No component/code changes needed.</p>
+      </div>
+      <div class="workflow-item">
+        <p class="q">Add a new project</p>
+        <p class="a">Add an entry to <code>content/projects.json</code> matching the <code>Project</code> type in <code>lib/types.ts</code>. If it has a case study, also add to <code>content/case-studies.json</code> with matching <code>projectIds</code>.</p>
+      </div>
+      <div class="workflow-item">
+        <p class="q">Add a new blog post</p>
+        <p class="a">Add <code>content/blog/my-post.mdx</code> with correct frontmatter. See <a href="#blog-pipeline">blog pipeline</a>.</p>
+      </div>
+      <div class="workflow-item">
+        <p class="q">Add a new terminal command</p>
+        <p class="a">See <a href="#terminal">terminal deep dive</a>.</p>
+      </div>
+      <div class="workflow-item">
+        <p class="q">Update the resume</p>
+        <p class="a">Replace <code>content/resume.pdf</code>, run <code>npm run resume</code> to sync it into <code>public/</code>.</p>
+      </div>
+      <div class="workflow-item">
+        <p class="q">Change AI terminal behavior/knowledge</p>
+        <p class="a">Edit <code>content/*.json</code> (new facts) or <code>lib/ai/context.ts</code> (new rules/tone in <code>buildSystemPrompt</code>).</p>
+      </div>
+    </section>
+
+    <section class="block" id="new-section">
+      <h2><span class="idx">10</span> Adding a new section to the homepage</h2>
+      <p>Say you want a new "Testimonials" section.</p>
+      <ol class="steps">
+        <li><strong>Content:</strong> create <code>content/testimonials.json</code>, e.g. <code>{ "eyebrow": "...", "title": "...", "items": [...] }</code>.</li>
+        <li><strong>Type:</strong> add <code>TestimonialsContent</code> (and any nested item type) to <code>lib/types.ts</code>.</li>
+        <li><strong>Getter:</strong> in <code>lib/content.ts</code>, import the JSON, cast it, add <code>getTestimonials()</code>.</li>
+        <li><strong>Component:</strong> create <code>components/testimonials/testimonials-section.tsx</code> — a presentational component accepting <code>{ testimonials: TestimonialsContent }</code> as props, styled with existing <code>ui/</code> primitives and your chosen motion approach.</li>
+        <li><strong>Wire it up:</strong> in <code>app/page.tsx</code>, call <code>const testimonials = getTestimonials();</code> and render <code>&lt;TestimonialsSection testimonials={testimonials} /&gt;</code> in the right position in the JSX tree. Use <code>dynamic()</code> import if it's heavy/below-the-fold, following the <code>ArchitectureSection</code> pattern.</li>
+        <li><strong>Nav (optional):</strong> if the section needs a nav anchor, add it to <code>content/navigation.json</code> and confirm <code>hooks/use-active-section.ts</code> picks up its <code>id</code>.</li>
+      </ol>
+    </section>
+
+    <section class="block" id="gotchas">
+      <h2><span class="idx">11</span> Gotchas &amp; conventions</h2>
+      <ul>
+        <li><strong>Never <code>import</code> from <code>content/*.json</code> inside a component.</strong> Always go through a <code>get*()</code> function in <code>lib/content.ts</code>, called from a page.</li>
+        <li><strong>Server vs. client components:</strong> most of <code>app/**/page.tsx</code> and <code>lib/content.ts</code> consumers are server components (no <code>"use client"</code>). Anything using GSAP, Framer Motion hooks, browser APIs, or React state needs <code>"use client"</code> at the top — see <code>components/providers.tsx</code> for an example.</li>
+        <li><strong>Dynamic imports (<code>next/dynamic</code>)</strong> are used for heavy or below-the-fold pieces (<code>ArchitectureSection</code>, <code>PortfolioTerminal</code>, the easter-egg overlays, <code>CustomCursor</code>) to keep first-load JS small. Follow the same pattern when adding something similarly heavy.</li>
+        <li><strong>The terminal's <code>ask</code> command is the only network call</strong> most users trigger; it gracefully degrades with no <code>GEMINI_API_KEY</code> set, so the app is fully functional without any env vars.</li>
+        <li><strong>Don't hardcode strings that are "content"</strong> (names, numbers, taglines, lists) directly in a component — even placeholder text has a way of becoming permanent. Put it in <code>content/</code>.</li>
+        <li><strong>Path alias:</strong> <code>@/*</code> maps to the repo root (see <code>tsconfig.json</code>), so imports look like <code>@/lib/content</code>, <code>@/components/ui</code>.</li>
+      </ul>
+    </section>
+
+    <section class="block" id="local-setup">
+      <h2><span class="idx">12</span> Local setup</h2>
+<pre><code>npm install
+cp .env.example .env.local   # optional — only needed for terminal AI mode
+npm run dev                  # http://localhost:3000, Turbopack
+npm run lint                 # ESLint
+npm run build && npm start   # production build/serve
+npm run resume                # sync content/resume.pdf -> public/</code></pre>
+      <p>No database, no auth, no build-time API calls required — everything renders from local JSON/MDX. The only optional external dependency is the Gemini API for the terminal's <code>ask</code> command (see <code>.env.example</code>).</p>
+    </section>
+
+    <div class="footer-nav">
+      <span>robin-portfolio / docs</span>
+      <span><a href="#mental-model">↑ back to top</a></span>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+    var sections = Array.prototype.slice.call(document.querySelectorAll('section.block'));
+
+    function setActive(id) {
+      links.forEach(function (link) {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        var visible = entries
+          .filter(function (e) { return e.isIntersecting; })
+          .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        }
+      }, { rootMargin: '-10% 0px -70% 0px', threshold: [0, 0.25, 0.5, 1] });
+
+      sections.forEach(function (section) { observer.observe(section); });
+    }
+  })();
+</script>
+
+</body>
+</html>

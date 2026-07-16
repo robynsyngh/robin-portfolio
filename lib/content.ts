@@ -35,7 +35,12 @@ import type {
   TerminalContent,
 } from "@/lib/types";
 
-const profile = profileData as Profile;
+const profile: Profile = {
+  ...(profileData as Profile),
+  // Allow overriding the canonical site URL per-environment (e.g. Vercel preview
+  // deployments) without editing content/profile.json.
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || (profileData as Profile).siteUrl,
+};
 const navigation = navigationData as NavItem[];
 const loader = loaderData as LoaderContent;
 const hero = heroData as HeroContent;

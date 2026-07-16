@@ -28,6 +28,7 @@ export function UnlockToast() {
             </div>
             <button
               type="button"
+              data-cursor-text="close"
               onClick={dismissToast}
               className="font-mono text-xs text-muted transition-colors hover:text-foreground"
             >

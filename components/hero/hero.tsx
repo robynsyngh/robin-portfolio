@@ -85,7 +85,7 @@ export function Hero({ profile, hero }: HeroProps) {
               <Button href={hero.exploreHref} variant="primary">
                 {hero.exploreLabel}
               </Button>
-              <Button href={profile.resumePath} variant="secondary">
+              <Button href="/resume" variant="secondary">
                 {hero.resumeLabel}
               </Button>
               {profile.social.map((itemSocial) => (
